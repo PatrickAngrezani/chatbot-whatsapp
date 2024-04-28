@@ -1,6 +1,7 @@
 const { Client, LocalAuth, NoAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 
+const messages = [];
 const now = new Date();
 const hour = now.getHours();
 console.log({ hour });
@@ -22,12 +23,12 @@ switch (hour) {
   case 14:
   case 15:
   case 16:
+  case 17:
     daytime = "Boa tarde!";
     console.log("Boa tarde! ️");
     break;
   default:
     break;
-  case 17:
   case 18:
   case 19:
     daytime = "Boa noite!";
@@ -56,17 +57,38 @@ client.on("ready", () => {
   console.log("Connected");
 });
 
-client.once("message_create", async (msg) => {
-  if (msg.body != "") {
-    console.log({ msg, id: msg.id });
-    await msg.reply`${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.
+client.on("message_create", async (msg) => {
+  if (!messages[msg.from]) {
+    messages[msg.from] = [];
+  }
 
-           Por favor, escolha a opção a seguir para darmos continuidade ao seu atendimento:
-           1 - Solicitação de spots;
-           2 - Dúvidas sobre o acesso ao player;
-           3 - Configurações técnicas;
-           4 - Outros setores.
-           `;
+  messages[msg.from].push({
+    body: msg.body,
+    timestamp: msg.timestamp,
+  });
+
+  if (!messages[msg.from].some((m) => m.body === "start")) {
+    sendWelcomeMessage(msg);
+  }
+
+  async function sendWelcomeMessage(msg) {
+    let sent = false;
+    if (!sent) {
+      console.log({ sent });
+      const reply = client.sendMessage(
+        msg.from,
+        `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.
+
+Por favor, selecione a opção a seguir para seguir com o atendimento:
+1 - Solicitação de spots;
+2 - Dúvidas sobre o acesso ao player;
+3 - Configurações técnicas;
+4 - Outros setores.`
+      );
+      sent = true;
+      messages[msg.from].push({ body: "start" });
+      await reply;
+    }
   }
 });
 
