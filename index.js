@@ -1,10 +1,10 @@
 const { Client, LocalAuth, NoAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 
-const messages = [];
+const messages = {};
 const now = new Date();
 const hour = now.getHours();
-console.log({ hour });
+let sent = false;
 let daytime = "";
 
 switch (hour) {
@@ -68,28 +68,29 @@ client.on("message_create", async (msg) => {
   });
 
   if (!messages[msg.from].some((m) => m.body === "start")) {
-    sendWelcomeMessage(msg);
+    await sendWelcomeMessage(msg);
   }
+});
 
-  async function sendWelcomeMessage(msg) {
-    let sent = false;
-    if (!sent) {
-      console.log({ sent });
-      const reply = client.sendMessage(
-        msg.from,
-        `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.
+async function sendWelcomeMessage(msg) {
+  if (!sent) {
+    console.log({ sent });
+    const reply = client.sendMessage(
+      msg.from,
+      `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.
 
 Por favor, selecione a opção a seguir para seguir com o atendimento:
 1 - Solicitação de spots;
 2 - Dúvidas sobre o acesso ao player;
 3 - Configurações técnicas;
 4 - Outros setores.`
-      );
-      sent = true;
-      messages[msg.from].push({ body: "start" });
-      await reply;
-    }
+    );
+    sent = true;
+    messages[msg.from.status] = "start";
+    console.log({ fromstart: messages[msg.from] });
+
+    await reply;
   }
-});
+}
 
 client.initialize();
