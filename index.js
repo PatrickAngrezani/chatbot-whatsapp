@@ -1,5 +1,7 @@
 const { Client, LocalAuth, NoAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
+const { Configuration, OpenAIPI } = require("openai");
+require("dotenv").config;
 
 const messages = {};
 const now = new Date();
@@ -25,16 +27,28 @@ switch (hour) {
   case 16:
   case 17:
     daytime = "Boa tarde!";
-    console.log("Boa tarde! ️");
+    console.log("Boa tarde! ️🔆");
     break;
   default:
     break;
   case 18:
   case 19:
     daytime = "Boa noite!";
-    console.log("Boa noite! ");
+    console.log("Boa noite! 🌑");
     break;
 }
+
+const saudacoes = [
+  "oi",
+  "olá",
+  "ola",
+  "bom dia",
+  "boa tarde",
+  "boa noite",
+  "tudo bem?",
+];
+
+const options = ["1", "2", "3", "4"];
 
 const client = new Client({
   puppeteer: {
@@ -49,7 +63,6 @@ const client = new Client({
 });
 
 client.on("qr", (qr) => {
-  //generate and scan this code with your phone
   qrcode.generate(qr, { small: true });
 });
 
@@ -57,39 +70,61 @@ client.on("ready", () => {
   console.log("Connected");
 });
 
-client.on("message_create", async (msg) => {
-  if (!messages[msg.from]) {
-    messages[msg.from] = [];
-  }
+client.on("message", async (msg) => {
+  const clientMessage = msg.body.toLowerCase();
 
-  messages[msg.from].push({
-    body: msg.body,
-    timestamp: msg.timestamp,
-  });
-
-  if (!messages[msg.from].some((m) => m.body === "start")) {
-    await sendWelcomeMessage(msg);
+  if (saudacoes.includes(clientMessage)) {
+    welcomeMessage().then((result) => msg.reply(result));
   }
 });
 
-async function sendWelcomeMessage(msg) {
-  if (!sent) {
-    console.log({ sent });
-    const reply = client.sendMessage(
-      msg.from,
-      `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.
+client.on("message", async (option) => {
+  const clientOption = option.body.toLowerCase();
+
+  if (options.includes(clientOption)) {
+    showOptions(clientOption).then((result) => option.reply(result));
+  }
+});
+
+async function welcomeMessage() {
+  return `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.
 
 Por favor, selecione a opção a seguir para seguir com o atendimento:
 1 - Solicitação de spots;
 2 - Dúvidas sobre o acesso ao player;
 3 - Configurações técnicas;
-4 - Outros setores.`
-    );
-    sent = true;
-    messages[msg.from.status] = "start";
-    console.log({ fromstart: messages[msg.from] });
+4 - Outros setores.`;
+}
 
-    await reply;
+async function showOptions(option) {
+  switch (option) {
+    case "1":
+      return `1 - Solicitação de Spots:
+
+Descreva sua solicitação no modelo a seguir:`;
+    case "2":
+      return `2 - Acesso ao Player:
+
+Descreva a situação ao tentar acessar o player.`;
+    case "3":
+      return `3 - Configurações técnicas:
+
+Deseja falar sobre qual tópico?
+ - Programação
+ - Volume
+ - Seleção Musical
+ - Outros assuntos`;
+    case "4":
+      return `4 - Outros setores:
+
+Selecione o setor de sua preferência:
+- Financeiro
+- Customer Success
+- Customer Success - 2
+- Suporte - 2`;
+
+    default:
+      return `Opção inválida, vamos recomeçar!`;
   }
 }
 
