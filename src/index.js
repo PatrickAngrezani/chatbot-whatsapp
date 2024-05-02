@@ -1,12 +1,10 @@
-const { Client, LocalAuth, NoAuth } = require("whatsapp-web.js");
+const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const { Configuration, OpenAIPI } = require("openai");
 require("dotenv").config;
 
-const messages = {};
 const now = new Date();
 const hour = now.getHours();
-let sent = false;
 let daytime = "";
 
 switch (hour) {
@@ -33,6 +31,10 @@ switch (hour) {
     break;
   case 18:
   case 19:
+  case 20:
+  case 21:
+  case 22:
+  case 23:
     daytime = "Boa noite!";
     console.log("Boa noite! 🌑");
     break;
@@ -87,6 +89,7 @@ client.on("message", async (option) => {
 });
 
 async function welcomeMessage() {
+  console.log({ daytime });
   return `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.
 
 Por favor, selecione a opção a seguir para seguir com o atendimento:
@@ -101,27 +104,34 @@ async function showOptions(option) {
     case "1":
       return `1 - Solicitação de Spots:
 
-Descreva sua solicitação no modelo a seguir:`;
+Descreva sua solicitação no modelo a seguir:
+      
+Data de Vigência: (Defina o período de reprodução);
+Estabelecimento: (Identifique sua rádio);
+Título: (Identifique o Spot);
+Conteúdo: (Digite o conteúdo do spot ou nos envie em arquivo.).`;
     case "2":
       return `2 - Acesso ao Player:
 
-Descreva a situação ao tentar acessar o player.`;
+Problema ocorrido: 
+(Envie imagens se necessário)`;
     case "3":
       return `3 - Configurações técnicas:
 
 Deseja falar sobre qual tópico?
- - Programação
- - Volume
- - Seleção Musical
- - Outros assuntos`;
+ - Programação;
+ - Volume;
+ - Seleção Musical;
+ - Outros assuntos.`;
     case "4":
       return `4 - Outros setores:
 
 Selecione o setor de sua preferência:
-- Financeiro
+- Comercial
 - Customer Success
-- Customer Success - 2
-- Suporte - 2`;
+- Financeiro
+- Suporte - Raphael Melo
+- Suporte - Valdiene Goes`;
 
     default:
       return `Opção inválida, vamos recomeçar!`;
