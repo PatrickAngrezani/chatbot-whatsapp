@@ -44,7 +44,7 @@ switch (hour) {
 
 const saudacoes = ["oi"];
 
-const options = ["1", "2", "3", "4"];
+const options = ["1", "2", "3", "4", "5"];
 let atendimentoMap = {};
 
 try {
@@ -162,14 +162,39 @@ Deseja falar sobre qual tópico?
       return `4 - Outros setores:
 
 Selecione o setor de sua preferência:
-- Comercial
-- Customer Success
-- Financeiro
-- Suporte - Raphael Melo
-- Suporte - Valdiene Goes`;
+- Comercial;
+- Customer Success;
+- Financeiro;
+- Suporte - Raphael Melo;
+- Suporte - Valdiene Goes.`;
+    case "5":
+      return welcomeMessage();
+  }
+}
 
-    default:
-      return `Opção inválida, vamos recomeçar!`;
+async function welcomeMessage(firstTime) {
+  let saudacao;
+  if (firstTime === true) {
+    saudacao = `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.`;
+  } else {
+    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
+  }
+
+  return `${saudacao}
+  
+1 - Solicitação de spots;
+2 - Dúvidas sobre o acesso ao player;
+3 - Configurações técnicas;
+4 - Outros setores;
+5 - Voltar ao Menu Principal.`;
+}
+
+async function saveAtendimentoMap() {
+  try {
+    const data = JSON.stringify(atendimentoMap);
+    fs.writeFileSync(atendimentoMapFile, data, "utf-8");
+  } catch (error) {
+    console.error("Error saving atendimentoMapFile:", error);
   }
 }
 
