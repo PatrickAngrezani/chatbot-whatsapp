@@ -9,6 +9,7 @@ require("dotenv").config;
 
 //intern files
 const spotOption = require("./options/spot-option");
+const playerOption = require("./options/player-option");
 
 const atendimentoMapFile = "./atendimentoMap.json";
 const now = new Date();
@@ -117,10 +118,7 @@ async function showOptions(option) {
     case "1":
       return spotOption;
     case "2":
-      return `2 - Acesso ao Player:
-
-Problema ocorrido: 
-(Envie imagens se necessário)`;
+      return playerOption;
     case "3":
       return `3 - Configurações técnicas:
 
