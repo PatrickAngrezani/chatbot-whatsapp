@@ -11,6 +11,7 @@ require("dotenv").config;
 const spotOption = require("./options/spot-option");
 const playerOption = require("./options/player-option");
 const settingsOption = require("./options/settings-option");
+const sectorsOption = require("./options/sectors-option");
 
 const atendimentoMapFile = "./atendimentoMap.json";
 const now = new Date();
@@ -123,14 +124,7 @@ async function showOptions(option) {
     case "3":
       return settingsOption;
     case "4":
-      return `4 - Outros setores:
-
-Selecione o setor de sua preferência:
-- Comercial;
-- Customer Success;
-- Financeiro;
-- Suporte - Raphael Melo;
-- Suporte - Valdiene Goes.`;
+      return sectorsOption;
     case "5":
       return welcomeMessage();
   }
