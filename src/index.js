@@ -12,6 +12,7 @@ const spotOption = require("./options/spot-option");
 const playerOption = require("./options/player-option");
 const settingsOption = require("./options/settings-option");
 const sectorsOption = require("./options/sectors-option");
+const menuOptions = require("./options/menu-options");
 
 const atendimentoMapFile = "./atendimentoMap.json";
 const now = new Date();
@@ -126,7 +127,7 @@ async function showOptions(option) {
     case "4":
       return sectorsOption;
     case "5":
-      return welcomeMessage();
+      return menuOptions;
   }
 }
 
