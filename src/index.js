@@ -1,8 +1,16 @@
+//system
+const fs = require("fs");
+
+//libraries
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const { Configuration, OpenAIPI } = require("openai");
 require("dotenv").config;
 
+//intern files
+const spotOption = require("./options/spot-option");
+
+const atendimentoMapFile = "./atendimentoMap.json";
 const now = new Date();
 const hour = now.getHours();
 let daytime = "";
@@ -40,15 +48,7 @@ switch (hour) {
     break;
 }
 
-const saudacoes = [
-  "oi",
-  "olá",
-  "ola",
-  "bom dia",
-  "boa tarde",
-  "boa noite",
-  "tudo bem?",
-];
+const saudacoes = ["oi745"];
 
 const options = ["1", "2", "3", "4", "5"];
 let atendimentoMap = {};
@@ -115,14 +115,7 @@ Por favor, selecione a opção a seguir para seguir com o atendimento:
 async function showOptions(option) {
   switch (option) {
     case "1":
-      return `1 - Solicitação de Spots:
-
-Descreva sua solicitação no modelo a seguir:
-      
-Data de Vigência: (Defina o período de reprodução);
-Estabelecimento: (Identifique sua rádio);
-Título: (Identifique o Spot);
-Conteúdo: (Digite o conteúdo do spot ou nos envie em arquivo.).`;
+      return spotOption;
     case "2":
       return `2 - Acesso ao Player:
 
