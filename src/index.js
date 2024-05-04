@@ -10,6 +10,7 @@ require("dotenv").config;
 //intern files
 const spotOption = require("./options/spot-option");
 const playerOption = require("./options/player-option");
+const settingsOption = require("./options/settings-option");
 
 const atendimentoMapFile = "./atendimentoMap.json";
 const now = new Date();
@@ -120,13 +121,7 @@ async function showOptions(option) {
     case "2":
       return playerOption;
     case "3":
-      return `3 - Configurações técnicas:
-
-Deseja falar sobre qual tópico?
- - Programação;
- - Volume;
- - Seleção Musical;
- - Outros assuntos.`;
+      return settingsOption;
     case "4":
       return `4 - Outros setores:
 
