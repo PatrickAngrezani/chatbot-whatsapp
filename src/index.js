@@ -8,6 +8,7 @@ const playerOption = require("./options/player-option");
 const settingsOption = require("./options/settings-option");
 const sectorsOption = require("./options/sectors-option");
 const menuOptions = require("./options/menu-options");
+const technicalSupport = require("./options/technical-support");
 
 require("dotenv").config;
 
@@ -23,7 +24,7 @@ const saudacoes = [
   "boa noite, tudo bem?",
 ];
 
-const options = ["1", "2", "3", "4"];
+const options = ["1", "2", "3", "4", "5", "6"];
 
 const client = new Client({
   puppeteer: {
@@ -64,8 +65,10 @@ async function showOptions(option) {
     case "3":
       return settingsOption;
     case "4":
-      return sectorsOption;
+      return technicalSupport;
     case "5":
+      return sectorsOption;
+    case "6":
       return menuOptions;
   }
 }
@@ -83,24 +86,9 @@ async function welcomeMessage(firstTime) {
 1 - Solicitação de spots;
 2 - Dúvidas sobre o acesso ao player;
 3 - Configurações técnicas;
-4 - Outros setores;
-5 - Voltar ao Menu Principal.`;
-}
-
-async function welcomeMessage(firstTime) {
-  let saudacao;
-  if (firstTime === true) {
-    saudacao = `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.`;
-  } else {
-    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
-  }
-
-  return `${saudacao}
-  
-1 - Solicitação de spots;
-2 - Dúvidas sobre o acesso ao player;
-3 - Configurações técnicas;
-4 - Outros setores.`;
+4 - Suporte Técnico;
+5 - Outros setores;
+6 - Voltar ao Menu Principal.`;
 }
 
 client.initialize();

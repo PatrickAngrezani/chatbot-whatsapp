@@ -1,4 +1,4 @@
-const sectorsOption = `4 - Outros setores:
+const sectorsOption = `5 - Outros setores:
 
 Selecione o setor de sua preferência:
 - Comercial;
