@@ -1,38 +1,29 @@
-//system
-const fs = require("fs");
 let daytime = require("./hour-time");
 
-//libraries
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
-const { Configuration, OpenAIPI } = require("openai");
-require("dotenv").config;
 
-//intern files
 const spotOption = require("./options/spot-option");
 const playerOption = require("./options/player-option");
 const settingsOption = require("./options/settings-option");
 const sectorsOption = require("./options/sectors-option");
 const menuOptions = require("./options/menu-options");
 
-const atendimentoMapFile = "./atendimentoMap.json";
+require("dotenv").config;
 
-const saudacoes = ["oi745"];
+const saudacoes = [
+  "oi",
+  "ola",
+  "olá",
+  "bom dia",
+  "boa tarde",
+  "boa noite",
+  "bom dia, tudo bem?",
+  "boa tarde, tudo bem?",
+  "boa noite, tudo bem?",
+];
 
-const options = ["1", "2", "3", "4", "5"];
-let atendimentoMap = {};
-
-try {
-  const data = fs.readFileSync(atendimentoMapFile, "utf8");
-  atendimentoMap = JSON.parse(data);
-} catch (error) {
-  if (error.code === "ENOENT") {
-    console.log("AtendimentoMap file not found, creating a new one.");
-    atendimentoMap = {};
-  } else {
-    console.error("Error reading atendimentoMap file:", error);
-  }
-}
+const options = ["1", "2", "3", "4"];
 
 const client = new Client({
   puppeteer: {
@@ -54,58 +45,13 @@ client.on("ready", () => {
   console.log("Connected");
 });
 
-client.on("message", async (option) => {
-  const clientOption = option.body.toLowerCase();
-
-  if (options.includes(clientOption)) {
-    showOptions(clientOption).then((result) => option.reply(result));
-  }
-
-  await saveAtendimentoMap();
-});
-
-//new model to configure historic talks
 client.on("message", async (msg) => {
-  const clientId = msg.from;
   const clientMessage = msg.body.toLowerCase();
 
-  //verify previous service "today"
-  const atendimento = atendimentoMap[clientId];
-
-  //configure message test
   if (saudacoes.includes(clientMessage)) {
-    if (
-      atendimento &&
-      atendimento.data === new Date().toISOString().slice(0, 10)
-    ) {
-      //service in same day, recover talk and continue
-      const conversa = atendimento.conversa;
-
-      //process new message and update talk
-      conversa.push(clientMessage);
-      atendimentoMap[clientId].conversa = conversa;
-
-      //send answer to user
-      await welcomeMessage(false).then((result) => msg.reply(result));
-
-      //save updated talk historic
-      await saveAtendimentoMap();
-    } else {
-      //save new service to customer
-      const novoAtendimento = {
-        data: new Date().toISOString().slice(0, 10),
-        conversa: [clientMessage],
-      };
-
-      //add new service to map
-      atendimentoMap[clientId] = novoAtendimento;
-
-      //send welcome message showing options
-      await welcomeMessage(true).then((result) => msg.reply(result));
-
-      //save service in localStorage
-      await saveAtendimentoMap();
-    }
+    await welcomeMessage(true).then((result) => msg.reply(result));
+  } else if (options.includes(clientMessage)) {
+    showOptions(clientMessage).then((result) => msg.reply(result));
   }
 });
 
@@ -141,15 +87,6 @@ async function welcomeMessage(firstTime) {
 5 - Voltar ao Menu Principal.`;
 }
 
-async function saveAtendimentoMap() {
-  try {
-    const data = JSON.stringify(atendimentoMap);
-    fs.writeFileSync(atendimentoMapFile, data, "utf-8");
-  } catch (error) {
-    console.error("Error saving atendimentoMapFile:", error);
-  }
-}
-
 async function welcomeMessage(firstTime) {
   let saudacao;
   if (firstTime === true) {
@@ -164,15 +101,6 @@ async function welcomeMessage(firstTime) {
 2 - Dúvidas sobre o acesso ao player;
 3 - Configurações técnicas;
 4 - Outros setores.`;
-}
-
-async function saveAtendimentoMap() {
-  try {
-    const data = JSON.stringify(atendimentoMap);
-    fs.writeFileSync(atendimentoMapFile, data, "utf-8");
-  } catch (error) {
-    console.error("Error saving atendimentoMapFile:", error);
-  }
 }
 
 client.initialize();
