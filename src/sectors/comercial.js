@@ -1,14 +1,13 @@
-let daytime = require("./hour-time");
+let daytime = require("../hour-time");
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
-
-const spotOption = require("./options/spot-option");
-const playerOption = require("./options/player-option");
-const settingsOption = require("./options/settings-option");
-const sectorsOption = require("./options/sectors-option");
-const menuOptions = require("./options/menu-options");
-const technicalSupport = require("./options/technical-support");
+const servicesAndProducts = require("../options/comercial/services-and-products");
+const personalizedQuote = require("../options/comercial/personalized-quote");
+const partnershipsAndAdvertising = require("../options/comercial/partnerships-and-advertising");
+const schedulingMeetings = require("../options/comercial/scheduling-meetings");
+const sectorsOption = require("../options/comercial/sectors-option");
+const menuOptions = require("../options/comercial/menu-options");
 
 require("dotenv").config;
 
@@ -56,39 +55,39 @@ client.on("message", async (msg) => {
   }
 });
 
+async function welcomeMessage(firstTime) {
+  let saudacao;
+  if (firstTime === true) {
+    saudacao = `${daytime} Seja Bem-vindo ao setor Comercial InfyMedia! Por favor, selecione uma opção para continuar:`;
+  } else {
+    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione uma opção para continuar:`;
+  }
+
+  return `${saudacao}
+    
+1 - Serviços e Produtos;
+2 - Orçamento personalizado;
+3 - Parcerias e Publicidade;
+4 - Agendamento de Reuniões;
+5 - Outros setores;
+6 - Voltar ao Menu Principal.`;
+}
+
 async function showOptions(option) {
   switch (option) {
     case "1":
-      return spotOption;
+      return servicesAndProducts;
     case "2":
-      return playerOption;
+      return personalizedQuote;
     case "3":
-      return settingsOption;
+      return partnershipsAndAdvertising;
     case "4":
-      return technicalSupport;
+      return schedulingMeetings;
     case "5":
       return sectorsOption;
     case "6":
       return menuOptions;
   }
-}
-
-async function welcomeMessage(firstTime) {
-  let saudacao;
-  if (firstTime === true) {
-    saudacao = `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.`;
-  } else {
-    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
-  }
-
-  return `${saudacao}
-  
-1 - Solicitação de spots;
-2 - Dúvidas sobre o acesso ao player;
-3 - Configurações técnicas;
-4 - Suporte Técnico;
-5 - Outros setores;
-6 - Voltar ao Menu Principal.`;
 }
 
 client.initialize();

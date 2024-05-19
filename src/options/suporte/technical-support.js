@@ -1,4 +1,4 @@
-const daytime = require("../hour-time");
+const daytime = require("../../hour-time");
 
 const technicalSupport = `4 - Suporte Técnico:
 
