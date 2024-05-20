@@ -3,11 +3,16 @@ let daytime = require("../hour-time");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const servicesAndProducts = require("../options/comercial/services-and-products");
-const personalizedQuote = require("../options/comercial/personalized-quote");
+const plansAndValues = require("../options/comercial/plans-and-values");
 const partnershipsAndAdvertising = require("../options/comercial/partnerships-and-advertising");
-const schedulingMeetings = require("../options/comercial/scheduling-meetings");
+const hiringProcess = require("../options/comercial/hiring-process");
 const sectorsOption = require("../options/comercial/sectors-option");
 const menuOptions = require("../options/comercial/menu-options");
+const royaltyFree = require("../options/comercial/royalty-free");
+const spots = require("../options/comercial/spots");
+const metrics = require("../options/comercial/metrics");
+const comercial = require("../options/comercial/comercial-sector");
+const legislation = require("../options/comercial/legislation");
 
 require("dotenv").config;
 
@@ -23,7 +28,7 @@ const saudacoes = [
   "boa noite, tudo bem?",
 ];
 
-const options = ["1", "2", "3", "4", "5", "6"];
+const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
 
 const client = new Client({
   puppeteer: {
@@ -66,11 +71,16 @@ async function welcomeMessage(firstTime) {
   return `${saudacao}
     
 1 - Serviços e Produtos;
-2 - Orçamento personalizado;
+2 - Planos e Valores;
 3 - Parcerias e Publicidade;
-4 - Agendamento de Reuniões;
-5 - Outros setores;
-6 - Voltar ao Menu Principal.`;
+4 - Processo de contratação;
+5 - Acervo Royalty Free;
+6 - Spots;
+7 - Legislação & Direitos Autorais;
+8 - Métricas;
+9 - Fale com o setor Comercial;
+10 - Outros setores;
+11 - Voltar ao Menu Principal.`;
 }
 
 async function showOptions(option) {
@@ -78,14 +88,24 @@ async function showOptions(option) {
     case "1":
       return servicesAndProducts;
     case "2":
-      return personalizedQuote;
+      return plansAndValues;
     case "3":
       return partnershipsAndAdvertising;
     case "4":
-      return schedulingMeetings;
+      return hiringProcess;
     case "5":
-      return sectorsOption;
+      return royaltyFree;
     case "6":
+      return spots;
+    case "7":
+      return legislation;
+    case "8":
+      return metrics;
+    case "9":
+      return comercial;
+    case "10":
+      return sectorsOption;
+    case "11":
       return menuOptions;
   }
 }
