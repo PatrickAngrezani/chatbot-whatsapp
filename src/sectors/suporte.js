@@ -9,6 +9,7 @@ const settingsOption = require("../options/suporte/settings-option");
 const sectorsOption = require("../options/suporte/sectors-option");
 const menuOptions = require("../options/suporte/menu-options");
 const technicalSupport = require("../options/suporte/technical-support");
+const invalidOption = require("../options/general/invalid-option");
 
 require("dotenv").config;
 
@@ -53,6 +54,8 @@ client.on("message", async (msg) => {
     await welcomeMessage(true).then((result) => msg.reply(result));
   } else if (options.includes(clientMessage)) {
     showOptions(clientMessage).then((result) => msg.reply(result));
+  } else {
+    msg.reply(invalidOption);
   }
 });
 

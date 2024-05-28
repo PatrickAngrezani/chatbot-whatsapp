@@ -13,6 +13,7 @@ const spots = require("../options/comercial/spots");
 const metrics = require("../options/comercial/metrics");
 const comercial = require("../options/comercial/comercial-sector");
 const legislation = require("../options/comercial/legislation");
+const invalidOption = require("../options/general/invalid-option");
 
 require("dotenv").config;
 
@@ -57,6 +58,8 @@ client.on("message", async (msg) => {
     await welcomeMessage(true).then((result) => msg.reply(result));
   } else if (options.includes(clientMessage)) {
     showOptions(clientMessage).then((result) => msg.reply(result));
+  } else {
+    msg.reply(invalidOption);
   }
 });
 
