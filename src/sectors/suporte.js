@@ -54,8 +54,6 @@ client.on("message", async (msg) => {
     await welcomeMessage(true).then((result) => msg.reply(result));
   } else if (options.includes(clientMessage)) {
     showOptions(clientMessage).then((result) => msg.reply(result));
-  } else {
-    msg.reply(invalidOption);
   }
 });
 
