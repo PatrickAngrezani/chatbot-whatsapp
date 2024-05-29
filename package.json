@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js"
+    "start": "nodemon ./src/index.js",
+    "test suporte.js": "jest suporte.spec.js",
+    "test comercial.js": "jest comercial.spec.js",
+    "test financeiro.js": "jest financeiro.spec.js"
   },
   "keywords": [],
   "author": "",
