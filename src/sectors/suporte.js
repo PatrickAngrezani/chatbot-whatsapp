@@ -49,11 +49,14 @@ client.on("ready", () => {
 
 client.on("message", async (msg) => {
   const clientMessage = msg.body.toLowerCase();
+  const isGroupMessage = msg.from.includes("g");
 
-  if (saudacoes.includes(clientMessage)) {
-    await welcomeMessage(true).then((result) => msg.reply(result));
-  } else if (options.includes(clientMessage)) {
-    showOptions(clientMessage).then((result) => msg.reply(result));
+  if (!isGroupMessage) {
+    if (saudacoes.includes(clientMessage)) {
+      await welcomeMessage(true).then((result) => msg.reply(result));
+    } else if (options.includes(clientMessage)) {
+      showOptions(clientMessage).then((result) => msg.reply(result));
+    }
   }
 });
 
