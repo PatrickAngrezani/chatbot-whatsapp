@@ -11,7 +11,6 @@ const contract = require("../options/financeiro/contract");
 const purchasingService = require("../options/financeiro/purchasingService");
 const ecadRoyalties = require("../options/financeiro/ecad-royalties");
 const rescission = require("../options/financeiro/rescission");
-const invalidOption = require("../options/general/invalid-option");
 const financialSector = require("../options/financeiro/financial-sector");
 const menuOptions = require("../options/financeiro/menu-options");
 

@@ -13,7 +13,6 @@ const spots = require("../options/comercial/spots");
 const metrics = require("../options/comercial/metrics");
 const comercial = require("../options/comercial/comercial-sector");
 const legislation = require("../options/comercial/legislation");
-const invalidOption = require("../options/general/invalid-option");
 
 require("dotenv").config;
 
