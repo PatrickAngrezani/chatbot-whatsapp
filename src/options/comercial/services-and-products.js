@@ -7,9 +7,9 @@ Fornecemos um link de player com login e senha para cada loja acessar no computa
 Também temos serviço de spots, onde é possível nos enviar as frases com as promoções, comunicados, vinhetas, etc. Produzimos junto a nossa equipe de locução, lhe enviamos para aprovação e configuramos na rádio na sua rádio, conforme desejar. *Tem direito à produção de 10 spots por mês* (não cumulativo) e a execução na rádio é livre.
 A InfyMedia possui 2 planos de contratação: o *Plano Hits* e o Plano *Royalty Free*.
 
-No plano *Hits*, tem uma programação de rádio ambiente com músicas de artistas consagrados e famosos e grandes Hits das paradas de sucesso. É ideal para empresas que desejam trabalhar music branding, mas este plano não isenta do pagamento mensal de ECAD.
+No plano *Hits*, há uma programação de rádio ambiente com músicas de artistas consagrados e famosos e grandes Hits das paradas de sucesso. É ideal para empresas que desejam trabalhar music branding, mas este plano não isenta do pagamento mensal de ECAD.
 
-Já no plano *Royalty Free* com acervo isento, temos acesso à uma programação de rádio ambiente com músicas licenciadas diretamente com artistas, sendo ideal para empresas que desejam reduzir custo com rádio ambiente para sua loja e obviamente neste plano, isenta o pagamento da taxa mensal de ECAD.
+Já no plano *Royalty Free* com acervo isento, temos acesso à uma programação de rádio ambiente com músicas licenciadas diretamente com artistas, sendo ideal para empresas que desejam reduzir custo com rádio ambiente para sua loja e claro neste plano, isenta o pagamento da taxa mensal de ECAD.
 `;
 
 module.exports = servicesAndProducts;

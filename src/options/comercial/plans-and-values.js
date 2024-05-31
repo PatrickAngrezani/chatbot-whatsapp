@@ -1,6 +1,6 @@
 const plansAndValues = `2 - Planos e Valores 
 
-Ambos os planos disponibilizamos a gestão de Rádio Indoor, de forma inteligente e interativa.
+Em ambos os planos disponibilizamos a gestão de Rádio Indoor, de forma inteligente e interativa.
 
 Com o cupom de desconto: *ESCUTE20*
 
