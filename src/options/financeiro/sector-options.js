@@ -3,8 +3,9 @@ const sectorsOption = `10 - Outros setores:
 Selecione o setor de sua preferência:
 - Customer Success 
         - (51) 98063-1413
+        - (51) 98544-0509
 - Comercial 
-        - (51) 98607-0833
+        - (11) 94270-0889
 - Suporte Técnico
         - (51) 98594-4583;
         - (51) 99609-5602;
