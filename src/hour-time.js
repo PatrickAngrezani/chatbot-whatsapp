@@ -3,6 +3,7 @@ const hour = now.getHours();
 let daytime;
 
 switch (hour) {
+  case 4:
   case 5:
   case 6:
   case 7:
@@ -22,8 +23,9 @@ switch (hour) {
     daytime = "Boa tarde!";
     console.log("Boa tarde! ️🔆");
     break;
-  default:
-    break;
+  case 1:
+  case 2:
+  case 3:
   case 18:
   case 19:
   case 20:
