@@ -10,6 +10,7 @@ const sectorsOption = require("../options/customer-success/sector-options");
 const customerSuccess = require("../options/customer-success/customer-success-sector");
 const cancelContract = require("../options/customer-success/cancel-contract");
 const menuOptions = require("../options/customer-success/menu-options");
+const customerSuccessMenu = require("../options/menu/customer-success-menu");
 
 require("dotenv").config;
 
@@ -96,14 +97,7 @@ Nome da empresa:`;
 async function showMenu() {
   return `Após informar os dados. Selecione a opção que gostaria:
     
-1 - Agendar treinamento;
-2 - Solicitar Spots;
-3 - Informações sobre Planos;
-4 - Fale com Customer Success;
-5 - Outros Setores;
-6 - Cancelamento;
-7 - Cobrança Ecad;
-8 - Voltar ao Menu Principal.`;
+${customerSuccessMenu}`;
 }
 
 client.initialize();
