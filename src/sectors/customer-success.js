@@ -86,7 +86,8 @@ async function welcomeMessage(firstTime) {
     saudacao = `${daytime} Seja bem vindo(a) a InfyMedia! Será uma satisfação atendê-lo(a).
 Para agilizar seu atendimento, informe os dados abaixo: 
 
-Nome da empresa:`;
+Nome da empresa:
+CNPJs das empresas (Ex: Pedir o 1° cnpj e depois o 2° cnpj):`;
   } else {
     saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
   }
