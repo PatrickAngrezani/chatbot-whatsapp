@@ -14,6 +14,7 @@ const metrics = require("../options/comercial/metrics");
 const comercial = require("../options/comercial/comercial-sector");
 const legislation = require("../options/comercial/legislation");
 const comercialMenu = require("../options/menu/comercial-menu");
+const scheduleTraining = require("../options/comercial/schedule-training");
 
 require("dotenv").config;
 
@@ -29,7 +30,7 @@ const saudacoes = [
   "boa noite, tudo bem?",
 ];
 
-const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
+const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 
 const client = new Client({
   puppeteer: {
@@ -93,10 +94,12 @@ async function showOptions(option) {
     case "8":
       return metrics;
     case "9":
-      return comercial;
+      return scheduleTraining;
     case "10":
-      return sectorsOption;
+      return comercial;
     case "11":
+      return sectorsOption;
+    case "12":
       return menuOptions;
   }
 }
