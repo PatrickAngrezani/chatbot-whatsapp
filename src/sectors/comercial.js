@@ -14,11 +14,13 @@ const metrics = require("../options/comercial/metrics");
 const comercial = require("../options/comercial/comercial-sector");
 const legislation = require("../options/comercial/legislation");
 const comercialMenu = require("../options/menu/comercial-menu");
-const saudacoes = require("../saudations/saudations")
+const saudacoes = require("../saudations/saudations");
 
 require("dotenv").config;
 
-const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
+const scheduleTraining = require("../options/comercial/schedule-training");
+
+const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 
 const client = new Client({
   puppeteer: {
