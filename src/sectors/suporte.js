@@ -14,20 +14,9 @@ const customerSuccessMenu = require("../options/menu/customer-success-menu");
 const financialMenu = require("../options/menu/financial-menu");
 const technicalSupportMenu = require("../options/menu/technical-support-menu");
 const desiredSubjectMenu = require("../options/menu/desired-subject-menu");
+const saudacoes = require("../saudations/saudations");
 
 require("dotenv").config;
-
-const saudacoes = [
-  "oi",
-  "ola",
-  "olá",
-  "bom dia",
-  "boa tarde",
-  "boa noite",
-  "bom dia, tudo bem?",
-  "boa tarde, tudo bem?",
-  "boa noite, tudo bem?",
-];
 
 const options = ["1", "2", "3", "4", "5", "6"];
 

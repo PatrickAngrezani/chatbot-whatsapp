@@ -11,20 +11,9 @@ const customerSuccess = require("../options/customer-success/customer-success-se
 const cancelContract = require("../options/customer-success/cancel-contract");
 const menuOptions = require("../options/customer-success/menu-options");
 const customerSuccessMenu = require("../options/menu/customer-success-menu");
+const saudacoes = require("../saudations/saudations");
 
 require("dotenv").config;
-
-const saudacoes = [
-  "oi",
-  "ola",
-  "olá",
-  "bom dia",
-  "boa tarde",
-  "boa noite",
-  "bom dia, tudo bem?",
-  "boa tarde, tudo bem?",
-  "boa noite, tudo bem?",
-];
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8"];
 

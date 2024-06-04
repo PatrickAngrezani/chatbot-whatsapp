@@ -14,20 +14,9 @@ const rescission = require("../options/financeiro/rescission");
 const financialSector = require("../options/financeiro/financial-sector");
 const menuOptions = require("../options/financeiro/menu-options");
 const financialMenu = require("../options/menu/financial-menu");
+const saudacoes = require("../saudations/saudations");
 
 require("dotenv").config;
-
-const saudacoes = [
-  "oi",
-  "ola",
-  "olá",
-  "bom dia",
-  "boa tarde",
-  "boa noite",
-  "bom dia, tudo bem?",
-  "boa tarde, tudo bem?",
-  "boa noite, tudo bem?",
-];
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
 

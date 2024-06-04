@@ -14,23 +14,11 @@ const metrics = require("../options/comercial/metrics");
 const comercial = require("../options/comercial/comercial-sector");
 const legislation = require("../options/comercial/legislation");
 const comercialMenu = require("../options/menu/comercial-menu");
-const scheduleTraining = require("../options/comercial/schedule-training");
+const saudacoes = require("../saudations/saudations")
 
 require("dotenv").config;
 
-const saudacoes = [
-  "oi",
-  "ola",
-  "olá",
-  "bom dia",
-  "boa tarde",
-  "boa noite",
-  "bom dia, tudo bem?",
-  "boa tarde, tudo bem?",
-  "boa noite, tudo bem?",
-];
-
-const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
 
 const client = new Client({
   puppeteer: {
