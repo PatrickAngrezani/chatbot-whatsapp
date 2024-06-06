@@ -15,6 +15,8 @@ const financialSector = require("../options/financeiro/financial-sector");
 const menuOptions = require("../options/financeiro/menu-options");
 const financialMenu = require("../options/menu/financial-menu");
 const saudacoes = require("../saudations/saudations");
+const cancelHits = require("../options/general/cancel-contract/cancel-hits");
+const cancelRoyaltyFree = require("../options/general/cancel-contract/cancel-royalty-free");
 
 require("dotenv").config;
 
@@ -47,7 +49,15 @@ client.on("message", async (msg) => {
     await welcomeMessage(true).then((result) => msg.reply(result));
     await showMenu(clientMessage).then((result) => msg.reply(result));
   } else if (options.includes(clientMessage)) {
-    showOptions(clientMessage).then((result) => msg.reply(result));
+    if (clientMessage == "8") {
+      await replyCancelContract().then((result) => msg.reply(result));
+    } else {
+      showOptions(clientMessage).then((result) => msg.reply(result));
+    }
+  } else if (clientMessage == "r" || clientMessage == "h") {
+    await displayCancelContract(clientMessage).then((result) =>
+      msg.reply(result)
+    );
   }
 });
 
@@ -101,6 +111,22 @@ async function showMenu() {
   return `Após o envio das informações solicitadas. Selecione a opção:
   
 ${financialMenu}`;
+}
+
+async function replyCancelContract() {
+  return `Atualmente, qual plano você tem contratado conosco?
+  
+H - HITS;
+R - ROYALTY FREE.`;
+}
+
+async function displayCancelContract(clientMessage) {
+  switch (clientMessage) {
+    case "h":
+      return cancelHits;
+    case "r":
+      return cancelRoyaltyFree;
+  }
 }
 
 client.initialize();
