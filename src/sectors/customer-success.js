@@ -12,6 +12,8 @@ const cancelContract = require("../options/customer-success/cancel-contract");
 const menuOptions = require("../options/customer-success/menu-options");
 const customerSuccessMenu = require("../options/menu/customer-success-menu");
 const saudacoes = require("../saudations/saudations");
+const cancelHits = require("../options/general/cancel-contract/cancel-hits");
+const cancelRoyaltyFree = require("../options/general/cancel-contract/cancel-royalty-free");
 
 require("dotenv").config;
 
@@ -44,7 +46,15 @@ client.on("message", async (msg) => {
     await welcomeMessage(true).then((result) => msg.reply(result));
     await showMenu(clientMessage).then((result) => msg.reply(result));
   } else if (options.includes(clientMessage)) {
-    showOptions(clientMessage).then((result) => msg.reply(result));
+    if (clientMessage == "6") {
+      await replyCancelContract().then((result) => msg.reply(result));
+    } else {
+      showOptions(clientMessage).then((result) => msg.reply(result));
+    }
+  } else if (clientMessage == "r" || clientMessage == "h") {
+    await displayCancelContract(clientMessage).then((result) =>
+      msg.reply(result)
+    );
   }
 });
 
@@ -88,6 +98,22 @@ async function showMenu() {
   return `Após informar os dados. Selecione a opção que gostaria:
     
 ${customerSuccessMenu}`;
+}
+
+async function replyCancelContract() {
+  return `Atualmente, qual plano você tem contratado conosco?
+  
+H - HITS;
+R - ROYALTY FREE.`;
+}
+
+async function displayCancelContract(clientMessage) {
+  switch (clientMessage) {
+    case "h":
+      return cancelHits;
+    case "r":
+      return cancelRoyaltyFree;
+  }
 }
 
 client.initialize();
