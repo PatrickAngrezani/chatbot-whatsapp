@@ -1,4 +1,5 @@
 let daytime = require("../hour-time");
+const now = new Date();
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
@@ -41,6 +42,8 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
+  const timestamp = msg.timestamp;
+  const dateMsg = new Date(timestamp * 1000);
   const clientMessage = msg.body.toLowerCase();
   const msgFrom = msg.from;
   const msgAuthor = msg.author;
@@ -61,24 +64,26 @@ client.on("message", async (msg) => {
     "555180326030@c.us",
   ];
 
-  // console.log({ from: msg.from, timestamp: msg.timestamp });
-
-  if (!companyNumbers.includes(msgAuthor)) {
-    if (!isGroupMessage) {
-      if (saudacoes.includes(clientMessage)) {
-        await welcomeMessage(true).then((result) => msg.reply(result));
-      } else if (options.includes(clientMessage)) {
-        showOptions(clientMessage).then((result) => msg.reply(result));
+  if (dateMsg >= now) {
+    if (!companyNumbers.includes(msgAuthor)) {
+      if (!isGroupMessage) {
+        if (saudacoes.includes(clientMessage)) {
+          await welcomeMessage(true).then((result) => msg.reply(result));
+        } else if (options.includes(clientMessage)) {
+          showOptions(clientMessage).then((result) => msg.reply(result));
+        }
+      } else {
+        if (saudacoes.includes(clientMessage)) {
+          await welcomeMessageGroup(true).then((result) => msg.reply(result));
+        } else if (options.includes(clientMessage)) {
+          showOptionsGroup(clientMessage).then((result) => msg.reply(result));
+        }
       }
     } else {
-      if (saudacoes.includes(clientMessage)) {
-        await welcomeMessageGroup(true).then((result) => msg.reply(result));
-      } else if (options.includes(clientMessage)) {
-        showOptionsGroup(clientMessage).then((result) => msg.reply(result));
-      }
+      console.log("Message didn't answered because is from a company number ");
     }
   } else {
-    console.log("Message didn't answered because is from a company number ");
+    console.log("Message sent before bot start");
   }
 });
 
