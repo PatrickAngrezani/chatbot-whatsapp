@@ -43,6 +43,7 @@ client.on("ready", () => {
 client.on("message", async (msg) => {
   const clientMessage = msg.body.toLowerCase();
   const msgFrom = msg.from;
+  const msgAuthor = msg.author;
   const isGroupMessage = msgFrom.includes("g");
   const companyNumbers = [
     "5511942700889@c.us",
@@ -62,8 +63,7 @@ client.on("message", async (msg) => {
 
   // console.log({ from: msg.from, timestamp: msg.timestamp });
 
-  if (!companyNumbers.includes(msgFrom)) {
-    console.log({ false: companyNumbers.includes(msgFrom) });
+  if (!companyNumbers.includes(msgAuthor)) {
     if (!isGroupMessage) {
       if (saudacoes.includes(clientMessage)) {
         await welcomeMessage(true).then((result) => msg.reply(result));
