@@ -10,11 +10,7 @@ const settingsOption = require("../options/suporte/settings-option");
 const sectorsOption = require("../options/suporte/sectors-option");
 const menuOptions = require("../options/suporte/menu-options");
 const technicalSupport = require("../options/suporte/technical-support");
-const comercialMenu = require("../options/menu/comercial-menu");
-const customerSuccessMenu = require("../options/menu/customer-success-menu");
-const financialMenu = require("../options/menu/financial-menu");
 const technicalSupportMenu = require("../options/menu/technical-support-menu");
-const desiredSubjectMenu = require("../options/menu/desired-subject-menu");
 const saudacoes = require("../saudations/saudations");
 
 require("dotenv").config;
@@ -73,11 +69,11 @@ client.on("message", async (msg) => {
           showOptions(clientMessage).then((result) => msg.reply(result));
         }
       } else {
-        if (saudacoes.includes(clientMessage)) {
-          await welcomeMessageGroup(true).then((result) => msg.reply(result));
-        } else if (options.includes(clientMessage)) {
-          showOptionsGroup(clientMessage).then((result) => msg.reply(result));
-        }
+        // if (saudacoes.includes(clientMessage)) {
+        //   await welcomeMessageGroup(true).then((result) => msg.reply(result));
+        // } else if (options.includes(clientMessage)) {
+        //   showOptionsGroup(clientMessage).then((result) => msg.reply(result));
+        // }
       }
     } else {
       console.log("Message didn't answered because is from a company number ");
@@ -117,46 +113,46 @@ async function welcomeMessage(firstTime) {
 ${technicalSupportMenu}`;
 }
 
-async function welcomeMessageGroup(firstTime) {
-  let saudacao;
+// async function welcomeMessageGroup(firstTime) {
+//   let saudacao;
 
-  if (firstTime) {
-    saudacao = `${daytime} Seja bem vindo ao menu para grupos da InfyMedia.
+//   if (firstTime) {
+//     saudacao = `${daytime} Seja bem vindo ao menu para grupos da InfyMedia.
 
-Você deseja contatar qual setor?`;
-  } else {
-    saudacao = `${daytime} Vejo que hoje já nos falamos. Escolha a opção a seguir:`;
-  }
+// Você deseja contatar qual setor?`;
+//   } else {
+//     saudacao = `${daytime} Vejo que hoje já nos falamos. Escolha a opção a seguir:`;
+//   }
 
-  return `${saudacao}
-1 - Comercial;
-2 - Customer Success;
-3 - Financeiro;
-4 - Suporte Técnico;
-5 - Digite o assunto desejado:`;
-}
+//   return `${saudacao}
+// 1 - Comercial;
+// 2 - Customer Success;
+// 3 - Financeiro;
+// 4 - Suporte Técnico;
+// 5 - Digite o assunto desejado:`;
+// }
 
-async function showOptionsGroup(option) {
-  switch (option) {
-    case "1":
-      return `Comercial
+// async function showOptionsGroup(option) {
+//   switch (option) {
+//     case "1":
+//       return `Comercial
 
-${comercialMenu}`;
-    case "2":
-      return `Customer Success
+// ${comercialMenu}`;
+//     case "2":
+//       return `Customer Success
 
-${customerSuccessMenu}`;
-    case "3":
-      return `Financeiro
+// ${customerSuccessMenu}`;
+//     case "3":
+//       return `Financeiro
 
-${financialMenu}`;
-    case "4":
-      return `Suporte Técnico
-      
-${technicalSupportMenu}      `;
-    case "5":
-      return desiredSubjectMenu;
-  }
-}
+// ${financialMenu}`;
+//     case "4":
+//       return `Suporte Técnico
+
+// ${technicalSupportMenu}      `;
+//     case "5":
+//       return desiredSubjectMenu;
+//   }
+// }
 
 client.initialize();
