@@ -1,5 +1,5 @@
 let daytime = require("../hour-time");
-const now = new Date();
+const now = new Date().toLocaleDateString();
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
@@ -16,6 +16,8 @@ const saudacoes = require("../saudations/saudations");
 require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6"];
+
+const generalFunctions = require("../sectors/general/general-functions");
 
 const client = new Client({
   puppeteer: {
@@ -39,7 +41,7 @@ client.on("ready", () => {
 
 client.on("message", async (msg) => {
   const timestamp = msg.timestamp;
-  const dateMsg = new Date(timestamp * 1000);
+  const dateMsg = new Date(timestamp * 1000).toLocaleString();
   const clientMessage = msg.body.toLowerCase();
   const msgFrom = msg.from;
   const msgAuthor = msg.author;
@@ -57,23 +59,37 @@ client.on("message", async (msg) => {
     "555186070833@c.us",
     "555185440509@c.us",
     "555184648888@c.us",
-    "555180326030@c.us",
+    // "555180326030@c.us",
+    "5518996074748@c.us",
   ];
 
   if (dateMsg >= now) {
-    if (!companyNumbers.includes(msgAuthor)) {
+    if (!companyNumbers.includes(msgFrom)) {
       if (!isGroupMessage) {
+        const hasService = await generalFunctions.hasService(
+          msgFrom.split("@")[0]
+        );
         if (saudacoes.includes(clientMessage)) {
-          await welcomeMessage(true).then((result) => msg.reply(result));
+          await welcomeMessage(hasService).then((result) => msg.reply(result));
         } else if (options.includes(clientMessage)) {
           showOptions(clientMessage).then((result) => msg.reply(result));
         }
+        await generalFunctions.saveService(
+          msgFrom.split("@")[0],
+          dateMsg,
+          clientMessage
+        );
       } else {
         // if (saudacoes.includes(clientMessage)) {
         //   await welcomeMessageGroup(true).then((result) => msg.reply(result));
         // } else if (options.includes(clientMessage)) {
         //   showOptionsGroup(clientMessage).then((result) => msg.reply(result));
         // }
+        await generalFunctions.saveService(
+          msgAuthor.split("@")[0],
+          dateMsg,
+          clientMessage
+        );
       }
     } else {
       console.log("Message didn't answered because is from a company number ");
@@ -100,9 +116,9 @@ async function showOptions(option) {
   }
 }
 
-async function welcomeMessage(firstTime) {
+async function welcomeMessage(hasService) {
   let saudacao;
-  if (firstTime) {
+  if (!hasService) {
     saudacao = `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.`;
   } else {
     saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
@@ -121,7 +137,7 @@ ${technicalSupportMenu}`;
 
 // Você deseja contatar qual setor?`;
 //   } else {
-//     saudacao = `${daytime} Vejo que hoje já nos falamos. Escolha a opção a seguir:`;
+//     saudacao = ${daytime} Vejo que hoje já nos falamos. Escolha a opção a seguir:;
 //   }
 
 //   return `${saudacao}
