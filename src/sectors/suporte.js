@@ -17,8 +17,6 @@ const saudacoes = require("../saudations/saudations");
 require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6"];
-const serviceMapFilePath = "../service-map.json";
-
 const generalFunctions = require("../sectors/general/general-functions");
 
 const client = new Client({
@@ -93,8 +91,6 @@ client.on("message", async (msg) => {
           clientMessage
         );
       }
-
-      await saveService(msgFrom.split("@")[0], dateMsg, clientMessage);
     } else {
       console.log("Message didn't answered because is from a company number ");
     }
@@ -174,33 +170,5 @@ ${technicalSupportMenu}`;
 //       return desiredSubjectMenu;
 //   }
 // }
-
-async function saveService(author, date, body) {
-  const serviceMap = await loadServices();
-
-  if (!serviceMap[author]) {
-    serviceMap[author] = [];
-  }
-
-  const newService = {
-    date,
-    body,
-  };
-
-  serviceMap[author].push(newService);
-
-  const serviceMapJson = JSON.stringify(serviceMap, null, 2);
-  fs.writeFileSync(serviceMapFilePath, serviceMapJson);
-}
-
-async function loadServices() {
-  try {
-    const serviceMapJson = fs.readFileSync(serviceMapFilePath, "utf-8");
-    return JSON.parse(serviceMapJson);
-  } catch (error) {
-    console.error("error trying to load services historic", error);
-    return {};
-  }
-}
 
 client.initialize();
