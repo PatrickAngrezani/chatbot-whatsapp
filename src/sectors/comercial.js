@@ -1,4 +1,5 @@
 let daytime = require("../hour-time");
+const timeStarted = new Date().toLocaleString();
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
@@ -21,6 +22,7 @@ require("dotenv").config;
 const scheduleTraining = require("../options/comercial/schedule-training");
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
+const generalFunctions = require("./general/general-functions");
 
 const client = new Client({
   puppeteer: {
@@ -43,21 +45,71 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
+  const timestamp = msg.timestamp;
+  const dateMsg = new Date(timestamp * 1000).toLocaleString();
   const clientMessage = msg.body.toLowerCase();
+  const msgFrom = msg.from;
+  const msgAuthor = msg.author;
+  const isGroupMessage = msgFrom.includes("g");
+  const companyNumbers = [
+    "5511942700889@c.us",
+    "5511975983317@c.us",
+    "555186116422@c.us",
+    "553898548432@c.us",
+    "555196095602@c.us",
+    "555196695926@c.us",
+    "555185468899@c.us",
+    "555198763990@c.us",
+    "555180631413@c.us",
+    "555186070833@c.us",
+    "555185440509@c.us",
+    "555184648888@c.us",
+    // "555180326030@c.us",
+    "5518996074748@c.us",
+  ];
 
-  if (saudacoes.includes(clientMessage)) {
-    await welcomeMessage(true).then((result) => msg.reply(result));
-  } else if (options.includes(clientMessage)) {
-    showOptions(clientMessage).then((result) => msg.reply(result));
+  if (dateMsg >= timeStarted) {
+    if (!companyNumbers.includes(msgFrom)) {
+      if (!isGroupMessage) {
+        const hasService = await generalFunctions.hasService(
+          msgFrom.split("@")[0]
+        );
+        if (saudacoes.includes(clientMessage)) {
+          await welcomeMessage(hasService).then((result) => msg.reply(result));
+        } else if (options.includes(clientMessage)) {
+          showOptions(clientMessage).then((result) => msg.reply(result));
+        }
+        await generalFunctions.saveService(
+          msgFrom.split("@")[0],
+          dateMsg,
+          clientMessage
+        );
+      } else {
+        // if (saudacoes.includes(clientMessage)) {
+        //   await welcomeMessageGroup(true).then((result) => msg.reply(result));
+        // } else if (options.includes(clientMessage)) {
+        //   showOptionsGroup(clientMessage).then((result) => msg.reply(result));
+        // }
+        await generalFunctions.saveService(
+          msgAuthor.split("@")[0],
+          dateMsg,
+          clientMessage
+        );
+      }
+    } else {
+      console.log("Message didn't answered because is from a company number ");
+    }
+  } else {
+    console.log("Message sent before bot start");
   }
 });
 
-async function welcomeMessage(firstTime) {
+async function welcomeMessage(hasService) {
   let saudacao;
-  if (firstTime === true) {
+  if (!hasService) {
     saudacao = `${daytime} Seja Bem-vindo ao setor Comercial InfyMedia! Por favor, selecione uma opção para continuar:`;
   } else {
-    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione uma opção para continuar:`;
+    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
   }
 
   return `${saudacao}
