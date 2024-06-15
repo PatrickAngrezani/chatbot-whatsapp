@@ -1,6 +1,5 @@
 let daytime = require("../hour-time");
-const now = new Date().toLocaleDateString();
-const fs = require("fs");
+const timeStarted = new Date().toLocaleString();
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
@@ -63,7 +62,7 @@ client.on("message", async (msg) => {
     "5518996074748@c.us",
   ];
 
-  if (dateMsg >= now) {
+  if (dateMsg >= timeStarted) {
     if (!companyNumbers.includes(msgFrom)) {
       if (!isGroupMessage) {
         const hasService = await generalFunctions.hasService(
