@@ -1,4 +1,5 @@
 const fs = require("fs");
+const timeStarted = new Date().toLocaleString();
 const serviceMapFilePath = "../../service-map.json";
 
 async function loadServices() {
@@ -19,7 +20,19 @@ async function hasService(author) {
     servicesMap = {};
   }
   const serviceAuthor = servicesMap[author];
-  return serviceAuthor ? true : false;
+
+  if (serviceAuthor) {
+    if (
+      serviceAuthor[serviceAuthor.length - 1].date.split(" ")[0] ==
+      timeStarted.split(" ")[0]
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
 }
 
 async function saveService(author, date, body) {
