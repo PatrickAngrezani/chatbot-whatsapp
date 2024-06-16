@@ -23,6 +23,7 @@ switch (hour) {
     daytime = "Boa tarde!";
     console.log("Boa tarde! ️🔆");
     break;
+  case 0:
   case 1:
   case 2:
   case 3:
