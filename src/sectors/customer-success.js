@@ -61,7 +61,7 @@ client.on("message", async (msg) => {
     "555186070833@c.us",
     "555185440509@c.us",
     "555184648888@c.us",
-    // "555180326030@c.us",
+    "555180326030@c.us",
     "5518996074748@c.us",
   ];
 
@@ -138,7 +138,7 @@ async function welcomeMessage(hasService) {
 Para agilizar seu atendimento, informe os dados abaixo: 
 
 Nome da empresa:
-CNPJs das empresas (Ex: Pedir o 1° cnpj e depois o 2° cnpj):`;
+CNPJs das empresas:`;
   } else {
     saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
   }
