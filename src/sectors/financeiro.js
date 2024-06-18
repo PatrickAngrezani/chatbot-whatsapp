@@ -1,3 +1,7 @@
+const fs = require("fs");
+const serviceMapFilePath = "../../service-map.json";
+fs.writeFileSync(serviceMapFilePath, JSON.stringify({}), "utf8");
+
 let daytime = require("../hour-time");
 const timeStarted = new Date().toLocaleString();
 
@@ -116,21 +120,21 @@ client.on("message", async (msg) => {
 async function showOptions(option) {
   switch (option) {
     case "1":
-      return bankSlipAndPayment; //Boleto/Pagamento;
+      return bankSlipAndPayment;
     case "2":
-      return transferKey; //Chave PIX da Empresa/Pagamento;
+      return transferKey;
     case "3":
-      return invoice; //Nota fiscal;
+      return invoice;
     case "4":
-      return financialAgreement; //Acordo Financeiro;
+      return financialAgreement;
     case "5":
-      return contract; //Contrato;
+      return contract;
     case "6":
-      return purchasingService; //Contratação;
+      return purchasingService;
     case "7":
-      return ecadRoyalties; //Cobrança Ecad;
+      return ecadRoyalties;
     case "8":
-      return rescission; //Cancelamento;
+      return rescission;
     case "9":
       return financialSector;
     case "10":
@@ -148,7 +152,7 @@ async function welcomeMessage(hasService) {
 Para agilizar seu atendimento informe os dados abaixo:
 - Nome completo da pessoa:
 - Número de lojas que possui conosco (Ex: 2 unid):
-- CNPJs das empresas (Ex: Pedir o 1° cnpj e depois o 2° cnpj):`;
+- CNPJs das empresas:`;
   } else {
     saudacao = `${daytime} Vejo que hoje já nos falamos. Será uma satisfação atendê-lo novamente.
     
