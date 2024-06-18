@@ -1,3 +1,7 @@
+const fs = require("fs");
+const serviceMapFilePath = "../../service-map.json";
+fs.writeFileSync(serviceMapFilePath, JSON.stringify({}), "utf8");
+
 let daytime = require("../hour-time");
 const timeStarted = new Date().toLocaleString();
 
