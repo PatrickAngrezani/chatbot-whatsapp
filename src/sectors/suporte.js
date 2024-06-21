@@ -15,12 +15,11 @@ const sectorsOption = require("../options/suporte/sectors-option");
 const menuOptions = require("../options/suporte/menu-options");
 const technicalSupport = require("../options/suporte/technical-support");
 const technicalSupportMenu = require("../options/menu/technical-support-menu");
-const saudacoes = require("../saudations/saudations");
 
 require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6"];
-const generalFunctions = require("../sectors/general/general-functions");
+const generalFunctions = require("./general/general");
 
 const client = new Client({
   puppeteer: {
@@ -45,10 +44,12 @@ client.on("ready", () => {
 client.on("message", async (msg) => {
   const timestamp = msg.timestamp;
   const dateMsg = new Date(timestamp * 1000).toLocaleString();
-  const clientMessage = msg.body.toLowerCase();
+  const clientMessage = msg.body.toLowerCase().trim();
   const msgFrom = msg.from;
   const msgAuthor = msg.author;
   const isGroupMessage = msgFrom.includes("g");
+  const numberOfWords = clientMessage.split(" ").length;
+
   const companyNumbers = [
     "5511942700889@c.us",
     "5511975983317@c.us",
@@ -62,7 +63,6 @@ client.on("message", async (msg) => {
     "555186070833@c.us",
     "555185440509@c.us",
     "555184648888@c.us",
-    "555180326030@c.us",
     "5518996074748@c.us",
   ];
 
@@ -72,7 +72,11 @@ client.on("message", async (msg) => {
         const hasService = await generalFunctions.hasService(
           msgFrom.split("@")[0]
         );
-        if (saudacoes.includes(clientMessage)) {
+        const hasGreetings = await generalFunctions.checkGreetings(
+          clientMessage
+        );
+
+        if (hasGreetings && numberOfWords <= 4) {
           await welcomeMessage(hasService).then((result) => msg.reply(result));
         } else if (options.includes(clientMessage)) {
           showOptions(clientMessage).then((result) => msg.reply(result));

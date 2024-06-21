@@ -2,6 +2,21 @@ const fs = require("fs");
 const timeStarted = new Date().toLocaleString();
 const serviceMapFilePath = "../../service-map.json";
 
+const teammateNames = [
+  "caires",
+  "debora",
+  "débora",
+  "eduardo",
+  "fernanda",
+  "je",
+  "katharine",
+  "marcelo",
+  "patrick",
+  "raphael",
+];
+
+const greetings = require("./greetings");
+
 async function loadServices() {
   try {
     const serviceMapJson = fs.readFileSync(serviceMapFilePath, "utf-8");
@@ -59,4 +74,23 @@ async function saveService(author, date, body) {
   }
 }
 
-module.exports = { loadServices, hasService, saveService };
+async function checkGreetings(message) {
+  let found = false;
+
+  for (const salutation of greetings) {
+    if (message.includes(salutation)) {
+      found = true;
+      break;
+    }
+  }
+
+  return found;
+}
+
+module.exports = {
+  loadServices,
+  hasService,
+  saveService,
+  checkGreetings,
+  teammateNames,
+};

@@ -1,4 +1,4 @@
-const saudacoes = [
+const greetings = [
   "oi",
   "oie",
   "oiee",
@@ -12,4 +12,4 @@ const saudacoes = [
   "boa noite, tudo bem?",
 ];
 
-module.exports = saudacoes;
+module.exports = greetings;
