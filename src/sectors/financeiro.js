@@ -156,7 +156,7 @@ Para agilizar seu atendimento informe os dados abaixo:
   } else {
     saudacao = `${daytime} Vejo que hoje já nos falamos. Será uma satisfação atendê-lo novamente.
     
-Deseja seguir com as mesmas informações anteiores? 
+Deseja seguir com as mesmas informações anteriores? 
 Pode também encaminhar o novo CNPJ a tratarmos.`;
   }
 
