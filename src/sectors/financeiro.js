@@ -138,7 +138,7 @@ async function welcomeMessage(hasService) {
     saudacao = `${daytime} Seja bem vindo(a) ao setor Financeiro InfyMedia! Será uma satisfação atendê-lo.
 
 Para agilizar seu atendimento informe os dados abaixo:
-- Nome completo da pessoa:
+- Nome completo:
 - Número de lojas que possui conosco (Ex: 2 unid):
 - CNPJs das empresas:`;
   } else {
