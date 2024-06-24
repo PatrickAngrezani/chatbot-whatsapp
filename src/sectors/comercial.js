@@ -19,14 +19,13 @@ const metrics = require("../options/comercial/metrics");
 const comercial = require("../options/comercial/comercial-sector");
 const legislation = require("../options/comercial/legislation");
 const comercialMenu = require("../options/menu/comercial-menu");
-const saudacoes = require("../saudations/saudations");
 
 require("dotenv").config;
 
 const scheduleTraining = require("../options/comercial/schedule-training");
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
-const generalFunctions = require("./general/general-functions");
+const generalFunctions = require("./general/general");
 
 const client = new Client({
   puppeteer: {
@@ -55,30 +54,19 @@ client.on("message", async (msg) => {
   const msgFrom = msg.from;
   const msgAuthor = msg.author;
   const isGroupMessage = msgFrom.includes("g");
-  const companyNumbers = [
-    "5511942700889@c.us",
-    "5511975983317@c.us",
-    "555186116422@c.us",
-    "553898548432@c.us",
-    "555196095602@c.us",
-    "555196695926@c.us",
-    "555185468899@c.us",
-    "555198763990@c.us",
-    "555180631413@c.us",
-    "555186070833@c.us",
-    "555185440509@c.us",
-    "555184648888@c.us",
-    "555180326030@c.us",
-    "5518996074748@c.us",
-  ];
+  const numberOfWords = clientMessage.split(" ").length;
 
   if (dateMsg >= timeStarted) {
-    if (!companyNumbers.includes(msgFrom)) {
+    if (!generalFunctions.companyNumbers.includes(msgFrom)) {
       if (!isGroupMessage) {
         const hasService = await generalFunctions.hasService(
           msgFrom.split("@")[0]
         );
-        if (saudacoes.includes(clientMessage)) {
+        const hasGreetings = await generalFunctions.checkGreetings(
+          clientMessage
+        );
+
+        if (hasGreetings && numberOfWords <= 6) {
           await welcomeMessage(hasService).then((result) => msg.reply(result));
         } else if (options.includes(clientMessage)) {
           showOptions(clientMessage).then((result) => msg.reply(result));
