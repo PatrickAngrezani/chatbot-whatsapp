@@ -50,24 +50,8 @@ client.on("message", async (msg) => {
   const isGroupMessage = msgFrom.includes("g");
   const numberOfWords = clientMessage.split(" ").length;
 
-  const companyNumbers = [
-    "5511942700889@c.us",
-    "5511975983317@c.us",
-    "555186116422@c.us",
-    "553898548432@c.us",
-    "555196095602@c.us",
-    "555196695926@c.us",
-    "555185468899@c.us",
-    "555198763990@c.us",
-    "555180631413@c.us",
-    "555186070833@c.us",
-    "555185440509@c.us",
-    "555184648888@c.us",
-    "5518996074748@c.us",
-  ];
-
   if (dateMsg >= timeStarted) {
-    if (!companyNumbers.includes(msgFrom)) {
+    if (!generalFunctions.companyNumbers.includes(msgFrom)) {
       if (!isGroupMessage) {
         const hasService = await generalFunctions.hasService(
           msgFrom.split("@")[0]
@@ -76,7 +60,7 @@ client.on("message", async (msg) => {
           clientMessage
         );
 
-        if (hasGreetings && numberOfWords <= 4) {
+        if (hasGreetings && numberOfWords <= 6) {
           await welcomeMessage(hasService).then((result) => msg.reply(result));
         } else if (options.includes(clientMessage)) {
           showOptions(clientMessage).then((result) => msg.reply(result));
