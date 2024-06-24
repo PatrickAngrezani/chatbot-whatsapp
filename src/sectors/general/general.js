@@ -15,6 +15,22 @@ const teammateNames = [
   "raphael",
 ];
 
+const companyNumbers = [
+  "5511942700889@c.us",
+  "5511975983317@c.us",
+  "555186116422@c.us",
+  "553898548432@c.us",
+  "555196095602@c.us",
+  "555196695926@c.us",
+  "555185468899@c.us",
+  "555198763990@c.us",
+  "555180631413@c.us",
+  "555186070833@c.us",
+  "555185440509@c.us",
+  "555184648888@c.us",
+  "5518996074748@c.us",
+];
+
 const greetings = require("./greetings");
 
 async function loadServices() {
@@ -93,4 +109,5 @@ module.exports = {
   saveService,
   checkGreetings,
   teammateNames,
+  companyNumbers,
 };

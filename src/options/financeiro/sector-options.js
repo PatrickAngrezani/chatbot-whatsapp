@@ -1,4 +1,4 @@
-const sectorsOption = `10 - Outros setores:
+const sectorsOption = `9 - Outros setores:
 
 Selecione o setor de sua preferência:
 - Customer Success 

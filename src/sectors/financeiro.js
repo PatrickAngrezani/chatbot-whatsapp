@@ -19,14 +19,13 @@ const rescission = require("../options/financeiro/rescission");
 const financialSector = require("../options/financeiro/financial-sector");
 const menuOptions = require("../options/financeiro/menu-options");
 const financialMenu = require("../options/menu/financial-menu");
-const saudacoes = require("../saudations/saudations");
 const cancelHits = require("../options/general/cancel-contract/cancel-hits");
 const cancelRoyaltyFree = require("../options/general/cancel-contract/cancel-royalty-free");
 
 require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
-const generalFunctions = require("../sectors/general/general-functions");
+const generalFunctions = require("./general/general");
 
 const client = new Client({
   puppeteer: {
@@ -55,30 +54,19 @@ client.on("message", async (msg) => {
   const msgFrom = msg.from;
   const msgAuthor = msg.author;
   const isGroupMessage = msgFrom.includes("g");
-  const companyNumbers = [
-    "5511942700889@c.us",
-    "5511975983317@c.us",
-    "555186116422@c.us",
-    "553898548432@c.us",
-    "555196095602@c.us",
-    "555196695926@c.us",
-    "555185468899@c.us",
-    "555198763990@c.us",
-    "555180631413@c.us",
-    "555186070833@c.us",
-    "555185440509@c.us",
-    "555184648888@c.us",
-    "555180326030@c.us",
-    "5518996074748@c.us",
-  ];
+  const numberOfWords = clientMessage.split(" ").length;
 
   if (dateMsg >= timeStarted) {
-    if (!companyNumbers.includes(msgFrom)) {
+    if (!generalFunctions.companyNumbers.includes(msgFrom)) {
       if (!isGroupMessage) {
         const hasService = await generalFunctions.hasService(
           msgFrom.split("@")[0]
         );
-        if (saudacoes.includes(clientMessage)) {
+        const hasGreetings = await generalFunctions.checkGreetings(
+          clientMessage
+        );
+
+        if (hasGreetings && numberOfWords <= 4) {
           await welcomeMessage(hasService).then((result) => msg.reply(result));
           await showMenu(clientMessage).then((result) => msg.reply(result));
         } else if (options.includes(clientMessage)) {
@@ -136,9 +124,9 @@ async function showOptions(option) {
     case "8":
       return rescission;
     case "9":
-      return financialSector;
-    case "10":
       return sectorsOption;
+    case "10":
+      return financialSector;
     case "11":
       return menuOptions;
   }
