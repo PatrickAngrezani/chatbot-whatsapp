@@ -11,10 +11,10 @@ switch (hour) {
   case 9:
   case 10:
   case 11:
-  case 12:
     daytime = "Bom dia!";
     console.log("Bom dia! ☀️");
     break;
+  case 12:
   case 13:
   case 14:
   case 15:

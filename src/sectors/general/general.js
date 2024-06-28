@@ -103,6 +103,30 @@ async function checkGreetings(message) {
   return found;
 }
 
+async function checkDayShift() {
+  let daytime;
+  const date = new Date();
+  const hour = date.getHours();
+
+  if (hour >= 5 && hour < 12) {
+    daytime = "Bom dia!";
+  } else if (hour >= 12 && hour < 18) {
+    daytime = "Boa tarde!";
+  } else {
+    daytime = "Boa noite!";
+  }
+
+  return daytime;
+}
+
+async function updateDayTime(currentDayTime) {
+  const newDayTime = await checkDayShift();
+  if (newDayTime != currentDayTime) {
+    currentDayTime = newDayTime;
+  }
+  return currentDayTime;
+}
+
 module.exports = {
   loadServices,
   hasService,
@@ -110,4 +134,5 @@ module.exports = {
   checkGreetings,
   teammateNames,
   companyNumbers,
+  updateDayTime,
 };

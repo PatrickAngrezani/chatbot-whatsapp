@@ -109,10 +109,12 @@ async function showOptions(option) {
 
 async function welcomeMessage(hasService) {
   let saudacao;
+  let currentDayTime = await generalFunctions.updateDayTime(daytime);
+
   if (!hasService) {
-    saudacao = `${daytime} Seja bem vindo(a) ao suporte técnico InfyMedia.`;
+    saudacao = `${currentDayTime} Seja bem vindo(a) ao suporte técnico InfyMedia.`;
   } else {
-    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
+    saudacao = `${currentDayTime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
   }
 
   return `${saudacao}
