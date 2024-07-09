@@ -56,8 +56,8 @@ client.on("message", async (msg) => {
   const isGroupMessage = msgFrom.includes("g");
   const numberOfWords = clientMessage.split(" ").length;
 
+  if (!generalFunctions.companyNumbers.includes(msgFrom)) {
   if (dateMsg >= timeStarted) {
-    if (!generalFunctions.companyNumbers.includes(msgFrom)) {
       if (!isGroupMessage) {
         const hasService = await generalFunctions.hasService(
           msgFrom.split("@")[0]
@@ -98,10 +98,10 @@ client.on("message", async (msg) => {
         );
       }
     } else {
-      console.log("Message didn't answered because is from a company number ");
+      console.log("Message sent before bot start");
     }
   } else {
-    console.log("Message sent before bot start");
+    console.log("Message didn't answered because is from a company number ");
   }
 });
 
