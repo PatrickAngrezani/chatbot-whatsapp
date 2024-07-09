@@ -29,7 +29,6 @@ const companyNumbers = [
   "555185440509@c.us",
   "555184648888@c.us",
   "5518996074748@c.us",
-  "555180326030@c.us",
   "555189932522@c.us",
   "5551989932522@c.us",
   "552792481106@c.us",
@@ -97,9 +96,10 @@ async function saveService(author, date, body) {
 
 async function checkGreetings(message) {
   let found = false;
+  const words = message.split(" ");
 
   for (const salutation of greetings) {
-    if (message.includes(salutation)) {
+    if (words.includes(salutation)) {
       found = true;
       break;
     }
