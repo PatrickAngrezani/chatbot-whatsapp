@@ -5,6 +5,8 @@ fs.writeFileSync(serviceMapFilePath, JSON.stringify({}), "utf8");
 let daytime = require("../hour-time");
 const timeStarted = new Date().toLocaleString();
 
+const express = require("express");
+const bodyParser = require("body-parser");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const servicesAndProducts = require("../options/comercial/services-and-products");
@@ -57,7 +59,7 @@ client.on("message", async (msg) => {
   const numberOfWords = clientMessage.split(" ").length;
 
   if (!generalFunctions.companyNumbers.includes(msgFrom)) {
-  if (dateMsg >= timeStarted) {
+    if (dateMsg >= timeStarted) {
       if (!isGroupMessage) {
         const hasService = await generalFunctions.hasService(
           msgFrom.split("@")[0]
@@ -128,14 +130,65 @@ async function showOptions(option) {
     case "8":
       return metrics;
     case "9":
-      return scheduleTraining;
-    case "10":
       return comercial;
-    case "11":
+    case "10":
       return sectorsOption;
-    case "12":
+    case "11":
       return menuOptions;
   }
 }
 
 client.initialize();
+
+client.on("receive-form", async (form) => {
+  const { leadPhoneNumber } = form;
+  const dddSouthEast = generalFunctions.dddSouthEast;
+
+  if (leadPhoneNumber) {
+    const stringNumber = leadPhoneNumber.split("+")[1].replace(/[()\s-]/g, "");
+    const stringNumber8Digits =
+      stringNumber.substring(0, 4) + stringNumber.substring(5);
+
+    const dddNumber = stringNumber.substring(2, 4);
+
+    const numberArgument = dddSouthEast.includes(dddNumber)
+      ? stringNumber
+      : stringNumber8Digits;
+
+    try {
+      await client.sendMessage(
+        `${numberArgument}@c.us`,
+        "[Teste envio automático.]"
+      );
+    } catch (error) {
+      console.error(
+        `Failed to send message to "${numberArgument}@c.us"`,
+        error
+      );
+    }
+  }
+});
+
+const app = express();
+app.use(bodyParser.json());
+
+app.post("/rd-webhook", (req, res) => {
+  const leads = req.body.leads;
+  let leadPhoneNumber;
+
+  for (const lead of leads) {
+    leadPhoneNumber = lead.personal_phone;
+
+    client.emit("receive-form", {
+      leadPhoneNumber,
+    });
+  }
+
+  res.status(200).send("Event received");
+});
+
+const PORT = 3000;
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});

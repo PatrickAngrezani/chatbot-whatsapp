@@ -35,6 +35,30 @@ const companyNumbers = [
   "5527992481106@c.us",
 ];
 
+const dddSouthEast = [
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "17",
+  "18",
+  "19",
+  "21",
+  "22",
+  "24",
+  "27",
+  "28",
+  "31",
+  "32",
+  "33",
+  "34",
+  "35",
+  "37",
+  "38",
+];
+
 const greetings = require("./greetings");
 
 async function loadServices() {
@@ -140,4 +164,5 @@ module.exports = {
   teammateNames,
   companyNumbers,
   updateDayTime,
+  dddSouthEast
 };
