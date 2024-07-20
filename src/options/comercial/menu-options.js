@@ -1,4 +1,4 @@
-const menuOptions = `12 - Menu Principal:
+const menuOptions = `11 - Menu Principal:
 
 Por favor, selecione a opção a seguir para seguir com o atendimento:
 1 - Serviços e Produtos;
