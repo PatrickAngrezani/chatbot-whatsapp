@@ -143,6 +143,7 @@ client.initialize();
 client.on("receive-form", async (form) => {
   const { leadPhoneNumber } = form;
   const dddSouthEast = generalFunctions.dddSouthEast;
+  const indoorForm = require("../forms/radio-indoor");
 
   if (leadPhoneNumber) {
     const stringNumber = leadPhoneNumber.split("+")[1].replace(/[()\s-]/g, "");
@@ -156,10 +157,7 @@ client.on("receive-form", async (form) => {
       : stringNumber8Digits;
 
     try {
-      await client.sendMessage(
-        `${numberArgument}@c.us`,
-        "[Teste envio automático.]"
-      );
+      await client.sendMessage(`${numberArgument}@c.us`, `${indoorForm}`);
     } catch (error) {
       console.error(
         `Failed to send message to "${numberArgument}@c.us"`,
