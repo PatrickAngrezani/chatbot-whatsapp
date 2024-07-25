@@ -307,6 +307,8 @@ async function sendNextFormQuestion(number) {
       `${number}@c.us`,
       "Todas as perguntas foram respondidas. Obrigado! Em breve um dos nossos profissinais entrará em contato para dar sequência ao atendimento."
     );
+    answerQuestions = false;
+
     delete conversationState[number];
   }
 }
