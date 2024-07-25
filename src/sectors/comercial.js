@@ -1,3 +1,4 @@
+require("dotenv").config();
 const fs = require("fs");
 const serviceMapFilePath = "../../service-map.json";
 fs.writeFileSync(serviceMapFilePath, JSON.stringify({}), "utf8");
@@ -24,10 +25,10 @@ const comercialMenu = require("../options/menu/comercial-menu");
 
 require("dotenv").config;
 
-const scheduleTraining = require("../options/comercial/schedule-training");
-
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const generalFunctions = require("./general/general");
+let clientMessage;
+let answerQuestions = false;
 
 const client = new Client({
   puppeteer: {
@@ -52,49 +53,104 @@ client.on("ready", () => {
 client.on("message", async (msg) => {
   const timestamp = msg.timestamp;
   const dateMsg = new Date(timestamp * 1000).toLocaleString();
-  const clientMessage = msg.body.toLowerCase();
+  clientMessage = msg.body.toLowerCase();
   const msgFrom = msg.from;
   const msgAuthor = msg.author;
   const isGroupMessage = msgFrom.includes("g");
   const numberOfWords = clientMessage.split(" ").length;
 
-  if (!generalFunctions.companyNumbers.includes(msgFrom)) {
-    if (dateMsg >= timeStarted) {
-      if (!isGroupMessage) {
-        const hasService = await generalFunctions.hasService(
-          msgFrom.split("@")[0]
-        );
-        const hasGreetings = await generalFunctions.checkGreetings(
-          clientMessage
-        );
+  if (!answerQuestions) {
+    if (!generalFunctions.companyNumbers.includes(msgFrom)) {
+      if (dateMsg >= timeStarted) {
+        if (!isGroupMessage) {
+          const hasService = await generalFunctions.hasService(
+            msgFrom.split("@")[0]
+          );
+          const hasGreetings = await generalFunctions.checkGreetings(
+            clientMessage
+          );
 
-        if (hasGreetings && numberOfWords <= 6) {
-          await welcomeMessage(hasService).then((result) => msg.reply(result));
-        } else if (options.includes(clientMessage)) {
-          showOptions(clientMessage).then((result) => msg.reply(result));
+          if (hasGreetings && numberOfWords <= 6) {
+            await welcomeMessage(hasService).then((result) =>
+              msg.reply(result)
+            );
+          } else if (options.includes(clientMessage)) {
+            showOptions(clientMessage).then((result) => msg.reply(result));
+          }
+          await generalFunctions.saveService(
+            msgFrom.split("@")[0],
+            dateMsg,
+            clientMessage
+          );
+        } else {
+          // if (saudacoes.includes(clientMessage)) {
+          //   await welcomeMessageGroup(true).then((result) => msg.reply(result));
+          // } else if (options.includes(clientMessage)) {
+          //   showOptionsGroup(clientMessage).then((result) => msg.reply(result));
+          // }
+          await generalFunctions.saveService(
+            msgAuthor.split("@")[0],
+            dateMsg,
+            clientMessage
+          );
         }
-        await generalFunctions.saveService(
-          msgFrom.split("@")[0],
-          dateMsg,
-          clientMessage
-        );
       } else {
-        // if (saudacoes.includes(clientMessage)) {
-        //   await welcomeMessageGroup(true).then((result) => msg.reply(result));
-        // } else if (options.includes(clientMessage)) {
-        //   showOptionsGroup(clientMessage).then((result) => msg.reply(result));
-        // }
-        await generalFunctions.saveService(
-          msgAuthor.split("@")[0],
-          dateMsg,
-          clientMessage
-        );
+        console.log("Message sent before bot start");
       }
     } else {
-      console.log("Message sent before bot start");
+      console.log("Message didn't answered because is from a company number");
     }
-  } else {
-    console.log("Message didn't answered because is from a company number ");
+  } else if (answerQuestions) {
+    const state = conversationState[numberArgument];
+
+    if (state) {
+      const currentQuestionIndex = state.currentQuestion;
+      const currentQuestionObj =
+        generalFunctions.formQuestionsRadioIndoor[currentQuestionIndex];
+
+      if (state.awaitingDetail) {
+        currentQuestionObj.validAnswers = state.responses.push({
+          question: `${currentQuestionObj.question} (Detail)`,
+          answer: clientMessage,
+        });
+
+        state.awaitingDetail = false;
+        state.currentQuestion++;
+
+        await sendNextFormQuestion(numberArgument);
+      } else if (currentQuestionObj.type === "multiple-choice") {
+        if (isValidResponse(currentQuestionIndex, clientMessage)) {
+          if (clientMessage === currentQuestionObj.requiresDetail) {
+            state.awaitingDetail = true;
+            await client.sendMessage(
+              `${numberArgument}@c.us`,
+              "Por favor, especifique:"
+            );
+          } else {
+            state.responses.push({
+              question: currentQuestionObj.question,
+              answer: clientMessage,
+            });
+            state.currentQuestion++;
+
+            await sendNextFormQuestion(numberArgument);
+          }
+        } else {
+          await client.sendMessage(
+            `${numberArgument}@c.us`,
+            `Resposta inválida, por favor responda conforme as alternativas acima`
+          );
+        }
+      } else if (currentQuestionObj.type === "open-ended") {
+        state.responses.push({
+          question: currentQuestionObj.question,
+          answer: clientMessage,
+        });
+        state.currentQuestion++;
+
+        await sendNextFormQuestion(numberArgument);
+      }
+    }
   }
 });
 
@@ -140,10 +196,30 @@ async function showOptions(option) {
 
 client.initialize();
 
+// const nodemailer = require("nodemailer");
+
+// const transporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: process.env.EMAIL_USER,
+//     pass: process.env.EMAIL_PASS,
+//   },
+// });
+
+const conversationState = {};
+let numberArgument;
+
 client.on("receive-form", async (form) => {
-  const { leadPhoneNumber } = form;
+  const { leadPhoneNumber, leadName, leadEmail } = form;
   const dddSouthEast = generalFunctions.dddSouthEast;
-  const indoorForm = require("../forms/radio-indoor");
+  // const leadEmailMessage = generalFunctions.leadEmailMessage;
+
+  // const mailOptions = {
+  //   from: process.env.EMAIL_USER,
+  //   to: leadEmail,
+  //   subject: "Formulário InfyMedia",
+  //   text: `Nome: ${leadName}\nEmail: ${leadEmail}\nMensagem: ${leadEmailMessage}`,
+  // };
 
   if (leadPhoneNumber) {
     const stringNumber = leadPhoneNumber.split("+")[1].replace(/[()\s-]/g, "");
@@ -152,33 +228,52 @@ client.on("receive-form", async (form) => {
 
     const dddNumber = stringNumber.substring(2, 4);
 
-    const numberArgument = dddSouthEast.includes(dddNumber)
+    numberArgument = dddSouthEast.includes(dddNumber)
       ? stringNumber
       : stringNumber8Digits;
-
-    try {
-      await client.sendMessage(`${numberArgument}@c.us`, `${indoorForm}`);
-    } catch (error) {
-      console.error(
-        `Failed to send message to "${numberArgument}@c.us"`,
-        error
-      );
-    }
   }
+
+  if (!conversationState[numberArgument]) {
+    conversationState[numberArgument] = { currentQuestion: 0, responses: [] };
+  }
+
+  const greetingsForm = generalFunctions.greetingsForm;
+
+  answerQuestions = true;
+  await client.sendMessage(`${numberArgument}@c.us`, `${greetingsForm}`);
+  try {
+    await sendNextFormQuestion(numberArgument);
+  } catch (error) {
+    console.error("Error sending the first question:", error);
+  } // transporter.sendMail(mailOptions, (error, info) => {
+  //   if (error) {
+  //     console.error("Erro ao enviar e-mail:", error);
+  //     return { status: 500, message: "Server error trying send email" };
+  //   } else {
+  //     console.log("E-mail enviado:", info.response);
+  //     return { status: 200, message: "Email sent succesfully" };
+  //   }
+  // });
 });
 
 const app = express();
 app.use(bodyParser.json());
 
+let leadPhoneNumber;
+let leadName;
+let leadEmail;
+
 app.post("/rd-webhook", (req, res) => {
   const leads = req.body.leads;
-  let leadPhoneNumber;
-
   for (const lead of leads) {
     leadPhoneNumber = lead.personal_phone;
+    leadName = lead.name;
+    leadEmail = lead.email;
 
     client.emit("receive-form", {
       leadPhoneNumber,
+      leadName,
+      leadEmail,
     });
   }
 
@@ -190,3 +285,40 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+async function sendNextFormQuestion(number) {
+  const state = conversationState[number] || {
+    currentQuestion: 0,
+    responses: [],
+    awaitingDetail: false,
+  };
+  const client_ = client;
+  const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
+
+  if (state.currentQuestion < formQuestionsRadioIndoor.length) {
+    const questionObj = formQuestionsRadioIndoor[state.currentQuestion];
+    try {
+      await client_.sendMessage(`${number}@c.us`, `${questionObj.question}`);
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    await client_.sendMessage(
+      `${number}@c.us`,
+      "Todas as perguntas foram respondidas. Obrigado! Em breve um dos nossos profissinais entrará em contato para dar sequência ao atendimento."
+    );
+    delete conversationState[number];
+  }
+}
+
+function isValidResponse(questionIndex, response) {
+  const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
+  const validAnswers = formQuestionsRadioIndoor[questionIndex].validAnswers;
+  if (
+    formQuestionsRadioIndoor[questionIndex].type === "multiple-choice" &&
+    !formQuestionsRadioIndoor[questionIndex].requiresDetail
+  ) {
+    return validAnswers.includes(response.toLowerCase());
+  }
+  return true;
+}
