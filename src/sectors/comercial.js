@@ -27,8 +27,7 @@ require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const generalFunctions = require("./general/general");
-let clientMessage;
-let answerQuestions = false;
+const conversationState = {};
 
 const client = new Client({
   puppeteer: {
@@ -53,13 +52,67 @@ client.on("ready", () => {
 client.on("message", async (msg) => {
   const timestamp = msg.timestamp;
   const dateMsg = new Date(timestamp * 1000).toLocaleString();
-  clientMessage = msg.body.toLowerCase();
+  const clientMessage = msg.body.toLowerCase();
   const msgFrom = msg.from;
   const msgAuthor = msg.author;
   const isGroupMessage = msgFrom.includes("g");
   const numberOfWords = clientMessage.split(" ").length;
 
-  if (!answerQuestions) {
+  const state = conversationState[msgFrom.split("@")[0]];
+
+  if (state) {
+    const currentQuestionIndex = state.currentQuestion;
+    const currentQuestionObj =
+      generalFunctions.formQuestionsRadioIndoor[currentQuestionIndex];
+
+    if (state.awaitingDetail) {
+      currentQuestionObj.validAnswers = state.responses.push({
+        question: `${currentQuestionObj.question} (Detail)`,
+        answer: clientMessage,
+      });
+
+      state.awaitingDetail = false;
+      state.currentQuestion++;
+
+      await sendNextFormQuestion(msgFrom);
+    } else if (currentQuestionObj.type === "multiple-choice") {
+      if (
+        isValidResponse(
+          currentQuestionIndex,
+          clientMessage,
+          msgFrom.split("@")[0]
+        )
+      ) {
+        2;
+        if (clientMessage === currentQuestionObj.requiresDetail) {
+          state.awaitingDetail = true;
+          await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+        } else {
+          state.responses.push({
+            question: currentQuestionObj.question,
+            answer: clientMessage,
+          });
+          state.currentQuestion++;
+
+          console.log({ multiple: msgFrom });
+          await sendNextFormQuestion(msgFrom);
+        }
+      } else {
+        await client.sendMessage(
+          `${msgFrom}`,
+          `Resposta inválida, por favor responda conforme as alternativas acima`
+        );
+      }
+    } else if (currentQuestionObj.type === "open-ended") {
+      state.responses.push({
+        question: currentQuestionObj.question,
+        answer: clientMessage,
+      });
+      state.currentQuestion++;
+
+      await sendNextFormQuestion(msgFrom);
+    }
+  } else {
     if (!generalFunctions.companyNumbers.includes(msgFrom)) {
       if (dateMsg >= timeStarted) {
         if (!isGroupMessage) {
@@ -99,57 +152,6 @@ client.on("message", async (msg) => {
       }
     } else {
       console.log("Message didn't answered because is from a company number");
-    }
-  } else if (answerQuestions) {
-    const state = conversationState[numberArgument];
-
-    if (state) {
-      const currentQuestionIndex = state.currentQuestion;
-      const currentQuestionObj =
-        generalFunctions.formQuestionsRadioIndoor[currentQuestionIndex];
-
-      if (state.awaitingDetail) {
-        currentQuestionObj.validAnswers = state.responses.push({
-          question: `${currentQuestionObj.question} (Detail)`,
-          answer: clientMessage,
-        });
-
-        state.awaitingDetail = false;
-        state.currentQuestion++;
-
-        await sendNextFormQuestion(numberArgument);
-      } else if (currentQuestionObj.type === "multiple-choice") {
-        if (isValidResponse(currentQuestionIndex, clientMessage)) {
-          if (clientMessage === currentQuestionObj.requiresDetail) {
-            state.awaitingDetail = true;
-            await client.sendMessage(
-              `${numberArgument}@c.us`,
-              "Por favor, especifique:"
-            );
-          } else {
-            state.responses.push({
-              question: currentQuestionObj.question,
-              answer: clientMessage,
-            });
-            state.currentQuestion++;
-
-            await sendNextFormQuestion(numberArgument);
-          }
-        } else {
-          await client.sendMessage(
-            `${numberArgument}@c.us`,
-            `Resposta inválida, por favor responda conforme as alternativas acima`
-          );
-        }
-      } else if (currentQuestionObj.type === "open-ended") {
-        state.responses.push({
-          question: currentQuestionObj.question,
-          answer: clientMessage,
-        });
-        state.currentQuestion++;
-
-        await sendNextFormQuestion(numberArgument);
-      }
     }
   }
 });
@@ -206,12 +208,10 @@ client.initialize();
 //   },
 // });
 
-const conversationState = {};
-let numberArgument;
-
 client.on("receive-form", async (form) => {
   const { leadPhoneNumber, leadName, leadEmail } = form;
   const dddSouthEast = generalFunctions.dddSouthEast;
+  let numberArgument;
   // const leadEmailMessage = generalFunctions.leadEmailMessage;
 
   // const mailOptions = {
@@ -234,15 +234,21 @@ client.on("receive-form", async (form) => {
   }
 
   if (!conversationState[numberArgument]) {
-    conversationState[numberArgument] = { currentQuestion: 0, responses: [] };
+    conversationState[numberArgument] = {
+      currentQuestion: 0,
+      responses: [],
+      awaitingDetail: false,
+      number: numberArgument,
+      answeringQuestions: true,
+    };
   }
 
   const greetingsForm = generalFunctions.greetingsForm;
+  const destinataryNumber = `${conversationState[numberArgument].number}@c.us`;
 
-  answerQuestions = true;
-  await client.sendMessage(`${numberArgument}@c.us`, `${greetingsForm}`);
+  await client.sendMessage(destinataryNumber, `${greetingsForm}`);
   try {
-    await sendNextFormQuestion(numberArgument);
+    await sendNextFormQuestion(destinataryNumber);
   } catch (error) {
     console.error("Error sending the first question:", error);
   } // transporter.sendMail(mailOptions, (error, info) => {
@@ -287,40 +293,56 @@ app.listen(PORT, () => {
 });
 
 async function sendNextFormQuestion(number) {
-  const state = conversationState[number] || {
+  const state = conversationState[number.split("@")[0]] || {
     currentQuestion: 0,
     responses: [],
     awaitingDetail: false,
+    number: number.split("@")[0],
+    answeringQuestions: true,
   };
+
   const client_ = client;
   const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
 
   if (state.currentQuestion < formQuestionsRadioIndoor.length) {
     const questionObj = formQuestionsRadioIndoor[state.currentQuestion];
+
     try {
-      await client_.sendMessage(`${number}@c.us`, `${questionObj.question}`);
+      await client_.sendMessage(`${number}`, `${questionObj.question}`);
     } catch (error) {
       console.error(error);
     }
   } else {
+    console.log({ state2: state, number });
     await client_.sendMessage(
-      `${number}@c.us`,
+      `${number}`,
       "Todas as perguntas foram respondidas. Obrigado! Em breve um dos nossos profissinais entrará em contato para dar sequência ao atendimento."
     );
-    answerQuestions = false;
+    state.answeringQuestions = false;
 
     delete conversationState[number];
   }
 }
 
-function isValidResponse(questionIndex, response) {
+function isValidResponse(questionIndex, response, number) {
   const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
+
   const validAnswers = formQuestionsRadioIndoor[questionIndex].validAnswers;
+
+  const questionObj = formQuestionsRadioIndoor[questionIndex];
+  const state = Object.values(conversationState).find(
+    (state) => state.number === number
+  );
+
   if (
-    formQuestionsRadioIndoor[questionIndex].type === "multiple-choice" &&
-    !formQuestionsRadioIndoor[questionIndex].requiresDetail
+    state &&
+    state.currentQuestion === questionIndex &&
+    state.number === number
   ) {
-    return validAnswers.includes(response.toLowerCase());
+    if (questionObj.type === "multiple-choice" && !questionObj.requiresDetail) {
+      return validAnswers.includes(response.toLowerCase());
+    }
+    return true;
   }
   return true;
 }
