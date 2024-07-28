@@ -209,7 +209,7 @@ client.initialize();
 // });
 
 client.on("receive-form", async (form) => {
-  const { leadPhoneNumber, leadName, leadEmail } = form;
+  const { leadPhoneNumber, leadName, leadEmail, leadCompany } = form;
   const dddSouthEast = generalFunctions.dddSouthEast;
   let numberArgument;
   // const leadEmailMessage = generalFunctions.leadEmailMessage;
@@ -239,14 +239,18 @@ client.on("receive-form", async (form) => {
       responses: [],
       awaitingDetail: false,
       number: numberArgument,
+      email: leadEmail,
       answeringQuestions: true,
     };
   }
 
-  const greetingsForm = generalFunctions.greetingsForm;
   const destinataryNumber = `${conversationState[numberArgument].number}@c.us`;
+  const formGreeting = `Olá, ${leadName}!👋 Somos da InfyMedia! Vejo que fala da empresa ${leadCompany}
 
-  await client.sendMessage(destinataryNumber, `${greetingsForm}`);
+Recebemos sua solicitação de contato através do nosso site!
+
+O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar como podemos ajudar. Por isso, vamos fazer algumas perguntas, ok?`;
+  await client.sendMessage(destinataryNumber, `${formGreeting}`);
   try {
     await sendNextFormQuestion(destinataryNumber);
   } catch (error) {
@@ -265,21 +269,22 @@ client.on("receive-form", async (form) => {
 const app = express();
 app.use(bodyParser.json());
 
-let leadPhoneNumber;
-let leadName;
-let leadEmail;
-
 app.post("/rd-webhook", (req, res) => {
   const leads = req.body.leads;
+  
   for (const lead of leads) {
-    leadPhoneNumber = lead.personal_phone;
-    leadName = lead.name;
-    leadEmail = lead.email;
+    const leadObject = {
+      leadPhoneNumber: lead.personal_phone,
+      leadName: lead.name,
+      leadEmail: lead.email,
+      leadCompany: lead.company,
+    };
 
     client.emit("receive-form", {
-      leadPhoneNumber,
-      leadName,
-      leadEmail,
+      leadPhoneNumber: leadObject["leadPhoneNumber"],
+      leadName: leadObject["leadName"],
+      leadEmail: leadObject["leadEmail"],
+      leadCompany: leadObject["leadCompany"],
     });
   }
 
