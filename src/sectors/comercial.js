@@ -60,7 +60,7 @@ client.on("message", async (msg) => {
 
   const state = conversationState[msgFrom.split("@")[0]];
 
-  if (state) {
+  if (state && state.type === "RadioIndoor") {
     const currentQuestionIndex = state.currentQuestion;
     const currentQuestionObj =
       generalFunctions.formQuestionsRadioIndoor[currentQuestionIndex];
@@ -74,13 +74,14 @@ client.on("message", async (msg) => {
       state.awaitingDetail = false;
       state.currentQuestion++;
 
-      await sendNextFormQuestion(msgFrom);
+      await sendNextFormQuestion(msgFrom, `${state.type}`);
     } else if (currentQuestionObj.type === "multiple-choice") {
       if (
         isValidResponse(
           currentQuestionIndex,
           clientMessage,
-          msgFrom.split("@")[0]
+          msgFrom.split("@")[0],
+          `${state.type}`
         )
       ) {
         2;
@@ -95,7 +96,7 @@ client.on("message", async (msg) => {
           state.currentQuestion++;
 
           console.log({ multiple: msgFrom });
-          await sendNextFormQuestion(msgFrom);
+          await sendNextFormQuestion(msgFrom, `${state.type}`);
         }
       } else {
         await client.sendMessage(
@@ -110,7 +111,59 @@ client.on("message", async (msg) => {
       });
       state.currentQuestion++;
 
-      await sendNextFormQuestion(msgFrom);
+      await sendNextFormQuestion(msgFrom, `${state.type}`);
+    }
+  } else if (state && state.type === "Infyads") {
+    const currentQuestionIndex = state.currentQuestion;
+    const currentQuestionObj =
+      generalFunctions.formQuestionsInfyads[currentQuestionIndex];
+
+    if (state.awaitingDetail) {
+      currentQuestionObj.validAnswers = state.responses.push({
+        question: `${currentQuestionObj.question} (Detail)`,
+        answer: clientMessage,
+      });
+
+      state.awaitingDetail = false;
+      state.currentQuestion++;
+
+      await sendNextFormQuestion(msgFrom, `${state.type}`);
+    } else if (currentQuestionObj.type === "multiple-choice") {
+      if (
+        isValidResponse(
+          currentQuestionIndex,
+          clientMessage,
+          msgFrom.split("@")[0],
+          `${state.type}`
+        )
+      ) {
+        if (clientMessage === currentQuestionObj.requiresDetail) {
+          state.awaitingDetail = true;
+          await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+        } else {
+          state.responses.push({
+            question: currentQuestionObj.question,
+            answer: clientMessage,
+          });
+          state.currentQuestion++;
+
+          await sendNextFormQuestion(msgFrom, `${state.type}`);
+        }
+      } else {
+        console.log({ clientMessage });
+        await client.sendMessage(
+          `${msgFrom}`,
+          `Resposta inválida, por favor responda conforme as alternativas acima`
+        );
+      }
+    } else if (currentQuestionObj.type === "open-ended") {
+      state.responses.push({
+        question: currentQuestionObj.question,
+        answer: clientMessage,
+      });
+      state.currentQuestion++;
+
+      await sendNextFormQuestion(msgFrom, `${state.type}`);
     }
   } else {
     if (!generalFunctions.companyNumbers.includes(msgFrom)) {
@@ -209,7 +262,14 @@ client.initialize();
 // });
 
 client.on("receive-form", async (form) => {
-  const { leadPhoneNumber, leadName, leadEmail, leadCompany } = form;
+  const {
+    leadPhoneNumber,
+    leadName,
+    leadEmail,
+    leadCompany,
+    leadInfyads,
+    leadRadioIndoor,
+  } = form;
   const dddSouthEast = generalFunctions.dddSouthEast;
   let numberArgument;
   // const leadEmailMessage = generalFunctions.leadEmailMessage;
@@ -250,9 +310,19 @@ client.on("receive-form", async (form) => {
 Recebemos sua solicitação de contato através do nosso site!
 
 O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar como podemos ajudar. Por isso, vamos fazer algumas perguntas, ok?`;
+
   await client.sendMessage(destinataryNumber, `${formGreeting}`);
   try {
-    await sendNextFormQuestion(destinataryNumber);
+    let type;
+    if (leadRadioIndoor) {
+      type = "RadioIndoor";
+      conversationState[numberArgument]["type"] = "RadioIndoor";
+    } else if (leadInfyads) {
+      type = "Infyads";
+      conversationState[numberArgument]["type"] = "Infyads";
+    }
+
+    await sendNextFormQuestion(destinataryNumber, `${type}`);
   } catch (error) {
     console.error("Error sending the first question:", error);
   } // transporter.sendMail(mailOptions, (error, info) => {
@@ -271,13 +341,14 @@ app.use(bodyParser.json());
 
 app.post("/rd-webhook", (req, res) => {
   const leads = req.body.leads;
-  
+
   for (const lead of leads) {
     const leadObject = {
       leadPhoneNumber: lead.personal_phone,
       leadName: lead.name,
       leadEmail: lead.email,
       leadCompany: lead.company,
+      leadRadioIndoor: true,
     };
 
     client.emit("receive-form", {
@@ -285,6 +356,30 @@ app.post("/rd-webhook", (req, res) => {
       leadName: leadObject["leadName"],
       leadEmail: leadObject["leadEmail"],
       leadCompany: leadObject["leadCompany"],
+      leadRadioIndoor: leadObject["leadRadioIndoor"],
+    });
+  }
+
+  res.status(200).send("Event received");
+});
+
+app.post("/infyads-webhook", (req, res) => {
+  const leads = req.body.leads;
+  for (const lead of leads) {
+    const leadObject = {
+      leadPhoneNumber: lead.personal_phone,
+      leadName: lead.name,
+      leadEmail: lead.email,
+      leadCompany: lead.company,
+      leadInfyads: true,
+    };
+
+    client.emit("receive-form", {
+      leadPhoneNumber: leadObject["leadPhoneNumber"],
+      leadName: leadObject["leadName"],
+      leadEmail: leadObject["leadEmail"],
+      leadCompany: leadObject["leadCompany"],
+      leadInfyads: leadObject["leadInfyads"],
     });
   }
 
@@ -297,44 +392,87 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-async function sendNextFormQuestion(number) {
-  const state = conversationState[number.split("@")[0]] || {
-    currentQuestion: 0,
-    responses: [],
-    awaitingDetail: false,
-    number: number.split("@")[0],
-    answeringQuestions: true,
-  };
-
+async function sendNextFormQuestion(number, type) {
   const client_ = client;
-  const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
+  if (type === "RadioIndoor") {
+    const state = conversationState[number.split("@")[0]] || {
+      currentQuestion: 0,
+      responses: [],
+      awaitingDetail: false,
+      number: number.split("@")[0],
+      answeringQuestions: true,
+      type: "RadioIndoor",
+    };
 
-  if (state.currentQuestion < formQuestionsRadioIndoor.length) {
-    const questionObj = formQuestionsRadioIndoor[state.currentQuestion];
+    const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
 
-    try {
-      await client_.sendMessage(`${number}`, `${questionObj.question}`);
-    } catch (error) {
-      console.error(error);
+    if (state.currentQuestion < formQuestionsRadioIndoor.length) {
+      const questionObj = formQuestionsRadioIndoor[state.currentQuestion];
+
+      try {
+        await client_.sendMessage(`${number}`, `${questionObj.question}`);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      await client_.sendMessage(
+        `${number}`,
+        "Todas as perguntas foram respondidas. Obrigado! Em breve um dos nossos profissinais entrará em contato para dar sequência ao atendimento."
+      );
+      state.answeringQuestions = false;
+
+      delete conversationState[number];
     }
-  } else {
-    console.log({ state2: state, number });
-    await client_.sendMessage(
-      `${number}`,
-      "Todas as perguntas foram respondidas. Obrigado! Em breve um dos nossos profissinais entrará em contato para dar sequência ao atendimento."
-    );
-    state.answeringQuestions = false;
+  } else if (type === "Infyads") {
+    const state = conversationState[number.split("@")[0]] || {
+      currentQuestion: 0,
+      responses: [],
+      awaitingDetail: false,
+      number: number.split("@")[0],
+      answeringQuestions: true,
+      type: "Infyads",
+    };
+    const formQuestionsInfyads = generalFunctions.formQuestionsInfyads;
 
-    delete conversationState[number];
+    if (state.currentQuestion < formQuestionsInfyads.length) {
+      const questionObj = formQuestionsInfyads[state.currentQuestion];
+
+      try {
+        await client_.sendMessage(`${number}`, `${questionObj.question}`);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      await client_.sendMessage(
+        `${number}`,
+        `Perfeito! Muito obrigado por suas respostas.
+
+Com base nas informações fornecidas, vamos gerar um link de acesso e finalizar a configuração do seu serviço de anúncios na rede InfyAds.
+
+Por favor, aguarde enquanto preparamos tudo para você!`
+      );
+      state.answeringQuestions = false;
+
+      delete conversationState[number];
+    }
   }
 }
 
-function isValidResponse(questionIndex, response, number) {
+function isValidResponse(questionIndex, response, number, type) {
   const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
+  const formQuestionsInfyads = generalFunctions.formQuestionsInfyads;
 
-  const validAnswers = formQuestionsRadioIndoor[questionIndex].validAnswers;
+  let validAnswers;
+  let questionObj
 
-  const questionObj = formQuestionsRadioIndoor[questionIndex];
+  if (type === "RadioIndoor") {
+    validAnswers = formQuestionsRadioIndoor[questionIndex].validAnswers;
+    questionObj = formQuestionsRadioIndoor[questionIndex];
+  } else if (type === "Infyads") {
+    validAnswers = formQuestionsInfyads[questionIndex].validAnswers;
+    questionObj = formQuestionsInfyads[questionIndex];
+  }
+
   const state = Object.values(conversationState).find(
     (state) => state.number === number
   );
