@@ -70,41 +70,41 @@ Recebemos sua solicitação de contato através do nosso site!
 O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar como podemos ajudar. Por isso, vamos fazer algumas perguntas, ok?`;
 
 const formQuestionsRadioIndoor = [
-    {
-      question: `Sua empresa já possui equipamento e estrutura de som instalada?
+  {
+    question: `Sua empresa já possui equipamento e estrutura de som instalada?
 1 - Sim
 2 - Não`,
-      validAnswers: ["1", "2"],
-      type: "multiple-choice",
-    },
-    {
-      question: `Já possui um fornecedor de rádio indoor?
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Já possui um fornecedor de rádio indoor?
 1 - Sim
 2 - Não`,
-      validAnswers: ["1", "2"],
-      type: "multiple-choice",
-    },
-    {
-      question: `Sua empresa já paga taxa de ECAD?
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Sua empresa já paga taxa de ECAD?
 1 - Sim
 2 - Não`,
-      validAnswers: ["1", "2"],
-      type: "multiple-choice",
-    },
-    {
-      question: `Gostaria de ter músicas conhecidas que são passíveis de cobrança de ECAD (nosso Plano Hits) ou prefere um acervo exclusivo que isente 100% a taxa de ECAD com garantia jurídica (nosso Plano Royalty Free)?
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Gostaria de ter músicas conhecidas que são passíveis de cobrança de ECAD (nosso Plano Hits) ou prefere um acervo exclusivo que isente 100% a taxa de ECAD com garantia jurídica (nosso Plano Royalty Free)?
 1 - Plano Hits
 2 - Plano Royalty Free`,
-      validAnswers: ["1", "2"],
-      type: "multiple-choice",
-    },
-    {
-      question: `Sua empresa já tem ou gostaria de ter vinhetas, anúncios e spots personalizados?
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Sua empresa já tem ou gostaria de ter vinhetas, anúncios e spots personalizados?
 1 - Sim
 2 - Não`,
-      validAnswers: ["1", "2"],
-      type: "multiple-choice",
-    },
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
   {
     question: `Gostaria de fazer parte da nossa rede de cashback da InfyAds, que busca anunciantes para veicular anúncios e, dessa forma, receber cashback?
 1 - Sim
@@ -167,6 +167,126 @@ const formQuestionsRadioIndoor = [
 1 - Sim
 2 - Não`,
     validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+];
+
+const formQuestionsInfyads = [
+  {
+    question: `Qual é o tipo de negócio da sua empresa?
+(Resposta aberta)`,
+    type: "open-ended",
+  },
+  {
+    question: `Sua empresa já possui alguma experiência com anúncios sonoros dentro de estabelecimentos?
+1 - Sim
+2 - Não`,
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Qual é o principal objetivo ao utilizar os serviços de anúncios da InfyAds?
+1 - Lançar um novo produto
+2 - Fortalecer a presença da marca
+3 - Aumentar o reconhecimento da marca
+4 - Influenciar decisões de compra em tempo real
+5 - Outros (especifique)`,
+    validAnswers: ["1", "2", "3", "4", "5"],
+    type: "multiple-choice",
+    requiresDetail: "5",
+  },
+  {
+    question: `Qual é a faixa etária predominante do seu público?
+1 - Menos de 18 anos
+2 - 18 a 25 anos
+3 - 26 a 35 anos
+4 - 36 a 50 anos
+5 - Acima de 50 anos`,
+    validAnswers: ["1", "2", "3", "4", "5"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Qual é a classe social predominante do seu público?
+1 - Classe A
+2 - Classe B
+3 - Classe C
+4 - Classe D`,
+    validAnswers: ["1", "2", "3", "4"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Em quais segmentos você gostaria de anunciar para atingir mais o seu público?
+1 - Vestuário
+2 - Academias
+3 - Supermercados
+4 - Ferramentas/Construção
+5 - Farmácias
+6 - Barbearias
+7 - Outros (especifique)`,
+    validAnswers: ["1", "2", "3", "4", "5", "6", "7"],
+    type: "multiple-choice",
+    requiresDetail: "7",
+  },
+  {
+    question: `Quais são as principais métricas que você utiliza para medir o sucesso de suas campanhas publicitárias?
+1 - Alcance e frequência
+2 - Taxa de cliques (CTR)
+3 - Retorno sobre investimento (ROI)
+4 - Conversões
+5 - Engajamento (curtidas, comentários, compartilhamentos)
+6 - Custo por Mil Impressões (CPM)
+7 - Outros (especifique)`,
+    validAnswers: ["1", "2", "3", "4", "5", "6", "7"],
+    type: "multiple-choice",
+    requiresDetail: "7",
+  },
+  {
+    question: `Qual é o orçamento disponível para sua campanha publicitária? (Resposta aberta)`,
+    type: "open-ended",
+  },
+  {
+    question: `Qual é a duração planejada para sua campanha?
+1 - Menos de 1 mês
+2 - 1 a 3 meses
+3 - 3 a 6 meses
+4 - Mais de 6 meses`,
+    validAnswers: ["1", "2", "3", "4"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Você está interessado em criar campanhas personalizadas falando diretamente com seu público-alvo baseado em localização específica e comportamento de compra?
+1 - Sim
+2 - Não`,
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Você gostaria de receber suporte na criação e implementação de sua campanha publicitária?
+1 - Sim
+2 - Não`,
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Nossos pacotes incluem 3 inserções diárias com spots de até 15 segundos. Esses formatos são adequados para sua campanha?
+1 - Sim
+2 - Não`,
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Quais são os principais desafios que você enfrenta atualmente em suas campanhas publicitárias?
+(Resposta aberta)`,
+    type: "open-ended",
+  },
+  {
+    question: `Qual é o melhor dia e turno para que nossa equipe entre em contato e finalize a configuração do seu acesso?
+1 - Segunda a sexta - Manhã
+2 - Segunda a sexta - Tarde
+3 - Segunda a sexta - Noite
+4 - Sábado - Manhã
+5 - Sábado - Tarde`,
+    validAnswers: ["1", "2", "3", "4", "5"],
     type: "multiple-choice",
   },
 ];
@@ -278,4 +398,5 @@ module.exports = {
   formQuestionsRadioIndoor,
   leadEmailMessage,
   greetingsForm,
+  formQuestionsInfyads,
 };
