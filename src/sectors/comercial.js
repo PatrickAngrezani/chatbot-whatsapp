@@ -65,105 +65,113 @@ client.on("message", async (msg) => {
     const currentQuestionObj =
       generalFunctions.formQuestionsRadioIndoor[currentQuestionIndex];
 
-    if (state.awaitingDetail) {
-      currentQuestionObj.validAnswers = state.responses.push({
-        question: `${currentQuestionObj.question} (Detail)`,
-        answer: clientMessage,
-      });
+    if (currentQuestionObj) {
+      if (state.awaitingDetail) {
+        currentQuestionObj.validAnswers = state.responses.push({
+          question: `${currentQuestionObj.question} (Detail)`,
+          answer: clientMessage,
+        });
 
-      state.awaitingDetail = false;
-      state.currentQuestion++;
+        state.awaitingDetail = false;
+        state.currentQuestion++;
 
-      await sendNextFormQuestion(msgFrom, `${state.type}`);
-    } else if (currentQuestionObj.type === "multiple-choice") {
-      if (
-        isValidResponse(
-          currentQuestionIndex,
-          clientMessage,
-          msgFrom.split("@")[0],
-          `${state.type}`
-        )
-      ) {
-        2;
-        if (clientMessage === currentQuestionObj.requiresDetail) {
-          state.awaitingDetail = true;
-          await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+        await sendNextFormQuestion(msgFrom, `${state.type}`);
+      } else if (currentQuestionObj.type === "multiple-choice") {
+        if (
+          isValidResponse(
+            currentQuestionIndex,
+            clientMessage,
+            msgFrom.split("@")[0],
+            `${state.type}`
+          )
+        ) {
+          2;
+          if (clientMessage === currentQuestionObj.requiresDetail) {
+            state.awaitingDetail = true;
+            await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+          } else {
+            state.responses.push({
+              question: currentQuestionObj.question,
+              answer: clientMessage,
+            });
+            state.currentQuestion++;
+
+            console.log({ multiple: msgFrom });
+            await sendNextFormQuestion(msgFrom, `${state.type}`);
+          }
         } else {
-          state.responses.push({
-            question: currentQuestionObj.question,
-            answer: clientMessage,
-          });
-          state.currentQuestion++;
-
-          console.log({ multiple: msgFrom });
-          await sendNextFormQuestion(msgFrom, `${state.type}`);
+          await client.sendMessage(
+            `${msgFrom}`,
+            `Resposta inválida, por favor responda conforme as alternativas acima`
+          );
         }
-      } else {
-        await client.sendMessage(
-          `${msgFrom}`,
-          `Resposta inválida, por favor responda conforme as alternativas acima`
-        );
-      }
-    } else if (currentQuestionObj.type === "open-ended") {
-      state.responses.push({
-        question: currentQuestionObj.question,
-        answer: clientMessage,
-      });
-      state.currentQuestion++;
+      } else if (currentQuestionObj.type === "open-ended") {
+        state.responses.push({
+          question: currentQuestionObj.question,
+          answer: clientMessage,
+        });
+        state.currentQuestion++;
 
-      await sendNextFormQuestion(msgFrom, `${state.type}`);
+        await sendNextFormQuestion(msgFrom, `${state.type}`);
+      }
+    } else {
+      console.error("Error getting Current question object");
     }
   } else if (state && state.type === "Infyads") {
     const currentQuestionIndex = state.currentQuestion;
     const currentQuestionObj =
       generalFunctions.formQuestionsInfyads[currentQuestionIndex];
 
-    if (state.awaitingDetail) {
-      currentQuestionObj.validAnswers = state.responses.push({
-        question: `${currentQuestionObj.question} (Detail)`,
-        answer: clientMessage,
-      });
+    if (currentQuestionObj) {
+      if (state.awaitingDetail) {
+        currentQuestionObj.validAnswers = state.responses.push({
+          question: `${currentQuestionObj.question} (Detail)`,
+          answer: clientMessage,
+        });
 
-      state.awaitingDetail = false;
-      state.currentQuestion++;
+        state.awaitingDetail = false;
+        state.currentQuestion++;
 
-      await sendNextFormQuestion(msgFrom, `${state.type}`);
-    } else if (currentQuestionObj.type === "multiple-choice") {
-      if (
-        isValidResponse(
-          currentQuestionIndex,
-          clientMessage,
-          msgFrom.split("@")[0],
-          `${state.type}`
-        )
-      ) {
-        if (clientMessage === currentQuestionObj.requiresDetail) {
-          state.awaitingDetail = true;
-          await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+        await sendNextFormQuestion(msgFrom, `${state.type}`);
+      } else if (currentQuestionObj.type === "multiple-choice") {
+        if (
+          isValidResponse(
+            currentQuestionIndex,
+            clientMessage,
+            msgFrom.split("@")[0],
+            `${state.type}`
+          )
+        ) {
+          if (clientMessage === currentQuestionObj.requiresDetail) {
+            state.awaitingDetail = true;
+            await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+          } else {
+            state.responses.push({
+              question: currentQuestionObj.question,
+              answer: clientMessage,
+            });
+            state.currentQuestion++;
+
+            await sendNextFormQuestion(msgFrom, `${state.type}`);
+          }
         } else {
-          state.responses.push({
-            question: currentQuestionObj.question,
-            answer: clientMessage,
-          });
-          state.currentQuestion++;
-
-          await sendNextFormQuestion(msgFrom, `${state.type}`);
+          console.log({ clientMessage });
+          await client.sendMessage(
+            `${msgFrom}`,
+            `Resposta inválida, por favor responda conforme as alternativas acima`
+          );
         }
-      } else {
-        console.log({ clientMessage });
-        await client.sendMessage(
-          `${msgFrom}`,
-          `Resposta inválida, por favor responda conforme as alternativas acima`
-        );
-      }
-    } else if (currentQuestionObj.type === "open-ended") {
-      state.responses.push({
-        question: currentQuestionObj.question,
-        answer: clientMessage,
-      });
-      state.currentQuestion++;
+      } else if (currentQuestionObj.type === "open-ended") {
+        state.responses.push({
+          question: currentQuestionObj.question,
+          answer: clientMessage,
+        });
+        state.currentQuestion++;
 
-      await sendNextFormQuestion(msgFrom, `${state.type}`);
+        await sendNextFormQuestion(msgFrom, `${state.type}`);
+      }
+    } else {
+      console.error("Error getting Current question object");
     }
   } else {
     if (!generalFunctions.companyNumbers.includes(msgFrom)) {
@@ -463,7 +471,7 @@ function isValidResponse(questionIndex, response, number, type) {
   const formQuestionsInfyads = generalFunctions.formQuestionsInfyads;
 
   let validAnswers;
-  let questionObj
+  let questionObj;
 
   if (type === "RadioIndoor") {
     validAnswers = formQuestionsRadioIndoor[questionIndex].validAnswers;
