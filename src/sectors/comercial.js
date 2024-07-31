@@ -259,15 +259,15 @@ async function showOptions(option) {
 
 client.initialize();
 
-// const nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 
-// const transporter = nodemailer.createTransport({
-//   service: "gmail",
-//   auth: {
-//     user: process.env.EMAIL_USER,
-//     pass: process.env.EMAIL_PASS,
-//   },
-// });
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 client.on("receive-form", async (form) => {
   const {
@@ -277,17 +277,18 @@ client.on("receive-form", async (form) => {
     leadCompany,
     leadInfyads,
     leadRadioIndoor,
+    brandToBeAnnounced,
   } = form;
   const dddSouthEast = generalFunctions.dddSouthEast;
   let numberArgument;
-  // const leadEmailMessage = generalFunctions.leadEmailMessage;
+  const leadEmailMessage = generalFunctions.leadEmailMessage;
 
-  // const mailOptions = {
-  //   from: process.env.EMAIL_USER,
-  //   to: leadEmail,
-  //   subject: "Formulário InfyMedia",
-  //   text: `Nome: ${leadName}\nEmail: ${leadEmail}\nMensagem: ${leadEmailMessage}`,
-  // };
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: `${leadEmail}`,
+    subject: "Formulário InfyMedia",
+    text: `Nome: ${leadName}\nEmail: ${leadEmail}\nMensagem: ${leadEmailMessage}`,
+  };
 
   if (leadPhoneNumber) {
     const stringNumber = leadPhoneNumber.split("+")[1].replace(/[()\s-]/g, "");
@@ -313,7 +314,13 @@ client.on("receive-form", async (form) => {
   }
 
   const destinataryNumber = `${conversationState[numberArgument].number}@c.us`;
-  const formGreeting = `Olá, ${leadName}!👋 Somos da InfyMedia! Vejo que fala da empresa ${leadCompany}
+  const formGreeting = leadRadioIndoor
+    ? `Olá, ${leadName}!👋 Somos da InfyMedia! Vejo que fala da empresa ${leadCompany}
+
+Recebemos sua solicitação de contato através do nosso site!
+
+O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar como podemos ajudar. Por isso, vamos fazer algumas perguntas, ok?`
+    : `Olá, ${leadName}!👋 Somos da InfyMedia! Vejo que fala da empresa ${leadCompany} e gostaria de anunciar a marca ${brandToBeAnnounced}.
 
 Recebemos sua solicitação de contato através do nosso site!
 
@@ -333,15 +340,17 @@ O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar com
     await sendNextFormQuestion(destinataryNumber, `${type}`);
   } catch (error) {
     console.error("Error sending the first question:", error);
-  } // transporter.sendMail(mailOptions, (error, info) => {
-  //   if (error) {
-  //     console.error("Erro ao enviar e-mail:", error);
-  //     return { status: 500, message: "Server error trying send email" };
-  //   } else {
-  //     console.log("E-mail enviado:", info.response);
-  //     return { status: 200, message: "Email sent succesfully" };
-  //   }
-  // });
+  }
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Erro ao enviar e-mail:", error);
+      return { status: 500, message: "Server error trying send email" };
+    } else {
+      console.log("E-mail enviado:", info.response);
+      return { status: 200, message: "Email sent succesfully" };
+    }
+  });
 });
 
 const app = express();
@@ -380,6 +389,8 @@ app.post("/infyads-webhook", (req, res) => {
       leadEmail: lead.email,
       leadCompany: lead.company,
       leadInfyads: true,
+      brandToBeAnnounced:
+        lead.custom_fields["Lead Scoring- Empresa ou Marca (Anunciantes)"],
     };
 
     client.emit("receive-form", {
@@ -388,6 +399,7 @@ app.post("/infyads-webhook", (req, res) => {
       leadEmail: leadObject["leadEmail"],
       leadCompany: leadObject["leadCompany"],
       leadInfyads: leadObject["leadInfyads"],
+      brandToBeAnnounced: leadObject["brandToBeAnnounced"],
     });
   }
 
