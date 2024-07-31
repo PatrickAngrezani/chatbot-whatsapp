@@ -96,7 +96,6 @@ client.on("message", async (msg) => {
             });
             state.currentQuestion++;
 
-            console.log({ multiple: msgFrom });
             await sendNextFormQuestion(msgFrom, `${state.type}`);
           }
         } else {
@@ -155,7 +154,6 @@ client.on("message", async (msg) => {
             await sendNextFormQuestion(msgFrom, `${state.type}`);
           }
         } else {
-          console.log({ clientMessage });
           await client.sendMessage(
             `${msgFrom}`,
             `Resposta inválida, por favor responda conforme as alternativas acima`
@@ -281,13 +279,22 @@ client.on("receive-form", async (form) => {
   } = form;
   const dddSouthEast = generalFunctions.dddSouthEast;
   let numberArgument;
-  const leadEmailMessage = generalFunctions.leadEmailMessage;
+  const linkWhatsApp = "https://wa.me/5511942700889";
+  let dayTimeFreetings = daytime.split("!")[0];
 
-  const mailOptions = {
+  let mailOptions = {
     from: process.env.EMAIL_USER,
     to: `${leadEmail}`,
     subject: "Formulário InfyMedia",
-    text: `Nome: ${leadName}\nEmail: ${leadEmail}\nMensagem: ${leadEmailMessage}`,
+    html: `${dayTimeFreetings}, ${leadName}! Espero que recebas essa mensagem bem!<br><br>
+
+Meu nome é Raphael Caires, responsável pelo setor Comercial da InfyMedia.<br><br>
+    
+Estou entrando em contato para confirmar o recebimento das informações através dos nossos formulários. Aproveito para avisar que te enviamos uma mensagem no WhatsApp.<br><br>
+
+Nossa equipe aguarda suas respostas para prosseguir com o atendimento.<br><br>
+    
+Atenciosamente, Raphael Caires -  <a href="${linkWhatsApp}">Meu WhatsApp</a>.<br><br>`,
   };
 
   if (leadPhoneNumber) {

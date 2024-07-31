@@ -61,7 +61,6 @@ const dddSouthEast = [
 
 const greetings = require("./greetings");
 
-const leadEmailMessage = `[testing email message]`;
 
 const greetingsForm = `Olá! 👋 Somos da InfyMedia!
 
@@ -396,7 +395,6 @@ module.exports = {
   updateDayTime,
   dddSouthEast,
   formQuestionsRadioIndoor,
-  leadEmailMessage,
   greetingsForm,
   formQuestionsInfyads,
 };
