@@ -28,7 +28,7 @@ Gostaria de ter
 Sim
 Não
 
-7 - Qual é o principal objetivo ao implementar o rádio indoor na sua empresa?
+7 - Qual é o principal objetivo ao implementar a rádio indoor na sua empresa?
 Entreter os clientes
 Informar sobre produtos e serviços
 Aumentar as vendas

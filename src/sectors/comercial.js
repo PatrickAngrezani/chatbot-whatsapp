@@ -311,6 +311,7 @@ Atenciosamente, Raphael Caires -  <a href="${linkWhatsApp}">Meu WhatsApp</a>.<br
 
   if (!conversationState[numberArgument]) {
     conversationState[numberArgument] = {
+      company: leadCompany,
       currentQuestion: 0,
       responses: [],
       awaitingDetail: false,
@@ -448,6 +449,19 @@ async function sendNextFormQuestion(number, type) {
       );
       state.answeringQuestions = false;
 
+      let instructionsCreateRadio = {
+        company: state.company,
+        responses: state.responses.map((response) => ({
+          question: response.question.split("?")[0],
+          answer: response.answer,
+        })),
+      };
+
+      await sendTeamRadioInstructions(
+        `120363301499456595@g.us`,
+        instructionsCreateRadio
+      );
+
       delete conversationState[number];
     }
   } else if (type === "Infyads") {
@@ -515,4 +529,20 @@ function isValidResponse(questionIndex, response, number, type) {
     return true;
   }
   return true;
+}
+
+async function sendTeamRadioInstructions(number, instructions) {
+  let message = `Instruções para criação de nova rádio da empresa ${instructions.company}:\n\n`;
+
+  instructions.responses.forEach((instruction, index) => {
+    message += `${index + 1} - ${instruction.question}\n(${
+      instruction.answer })\n\n`;
+  });
+
+  try {
+    await client.sendMessage(number, message);
+    console.log("Instruções enviadas para o time.");
+  } catch (error) {
+    console.error("Erro ao enviar instruções para o time:", error);
+  }
 }
