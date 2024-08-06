@@ -23,7 +23,6 @@ const comercial = require("../options/comercial/comercial-sector");
 const legislation = require("../options/comercial/legislation");
 const comercialMenu = require("../options/menu/comercial-menu");
 
-require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const generalFunctions = require("./general/general");
@@ -536,7 +535,8 @@ async function sendTeamRadioInstructions(number, instructions) {
 
   instructions.responses.forEach((instruction, index) => {
     message += `${index + 1} - ${instruction.question}\n(${
-      instruction.answer })\n\n`;
+      instruction.answer
+    })\n\n`;
   });
 
   try {

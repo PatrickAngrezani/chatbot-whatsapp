@@ -4,10 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js",
-    "test suporte.js": "jest suporte.spec.js",
-    "test comercial.js": "jest comercial.spec.js",
-    "test financeiro.js": "jest financeiro.spec.js"
+    "start": "node ./src/sectors/comercial.js"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +17,9 @@
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.0",
     "openai": "^4.40.0",
+    "puppeteer": "^22.15.0",
     "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.24.0"
+    "rimraf": "^6.0.1",
+    "whatsapp-web.js": "^1.25.0"
   }
 }
