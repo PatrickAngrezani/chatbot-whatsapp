@@ -26,7 +26,8 @@ const comercialMenu = require("../options/menu/comercial-menu");
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const generalFunctions = require("./general/general");
 const conversationState = {};
-let qrCodeImageData = "";
+
+let qrCodeBuffer = null;
 let isClientReady = false;
 
 const client = new Client({
@@ -41,15 +42,16 @@ const client = new Client({
   },
 });
 
-client.on("qr", async (qr) => {
+client.on('qr', async (qr) => {
   try {
-    qrCodeImageData = await QRCode.toDataURL(qr);
+      qrCodeBuffer = await QRCode.toBuffer(qr);
   } catch (err) {
-    console.error("Error generating QR code:", err);
+      console.error('Error generating QR code:', err);
   }
 
-  QRCode.toString(qr, { type: "terminal" }, (err, url) => {
-    if (err) console.error("Error displaying QR code in terminal:", err);
+  QRCode.toString(qr, { type: 'terminal' }, (err, url) => {
+      if (err) console.error('Error displaying QR code in terminal:', err);
+      console.log(url);
   });
 });
 
@@ -94,7 +96,6 @@ client.on("message", async (msg) => {
             `${state.type}`
           )
         ) {
-          2;
           if (clientMessage === currentQuestionObj.requiresDetail) {
             state.awaitingDetail = true;
             await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
@@ -388,11 +389,12 @@ app.get("/", (req, res) => {
           <p>The WhatsApp client is successfully connected.</p>
       `);
   } else {
-    res.send(`
-          <h1>WhatsApp QR Code</h1>
-          <img src="${qrCodeImageData}" alt="QR Code" />
-          <p>Please scan the QR code to connect.</p>
-      `);
+    if (qrCodeBuffer) {
+      res.setHeader("Content-Type", "image/png");
+      res.send(qrCodeBuffer);
+    } else {
+      res.status(503).send("QR Code not available");
+    }
   }
 });
 
