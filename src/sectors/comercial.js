@@ -23,7 +23,6 @@ const comercial = require("../options/comercial/comercial-sector");
 const legislation = require("../options/comercial/legislation");
 const comercialMenu = require("../options/menu/comercial-menu");
 
-
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const generalFunctions = require("./general/general");
 const conversationState = {};
@@ -41,7 +40,14 @@ const client = new Client({
 });
 
 client.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
+  qrcode.toFile(
+    path.join(__dirname, "public", "qrcode.png"),
+    qr,
+    function (err) {
+      if (err) throw err;
+      console.log("QR Code saved as qrcode.png");
+    }
+  );
 });
 
 client.on("ready", () => {
@@ -362,6 +368,13 @@ O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar com
 
 const app = express();
 app.use(bodyParser.json());
+
+app.get("/", (req, res) => {
+  res.send(`
+      <h1>WhatsApp QR Code</h1>
+      <img src="/qrcode.png" alt="QR Code" />
+  `);
+});
 
 app.post("/rd-webhook", (req, res) => {
   const leads = req.body.leads;
