@@ -9,7 +9,7 @@ const timeStarted = new Date().toLocaleString();
 const express = require("express");
 const bodyParser = require("body-parser");
 const { Client, LocalAuth } = require("whatsapp-web.js");
-const qrcode = require("qrcode-terminal");
+const QRCode = require("qrcode");
 const servicesAndProducts = require("../options/comercial/services-and-products");
 const plansAndValues = require("../options/comercial/plans-and-values");
 const partnershipsAndAdvertising = require("../options/comercial/partnerships-and-advertising");
@@ -27,6 +27,8 @@ const comercialMenu = require("../options/menu/comercial-menu");
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const generalFunctions = require("./general/general");
 const conversationState = {};
+let qrCodeImageData = "";
+let isClientReady = false;
 
 const client = new Client({
   puppeteer: {
@@ -40,12 +42,21 @@ const client = new Client({
   },
 });
 
-client.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
+client.on("qr", async (qr) => {
+  try {
+    qrCodeImageData = await QRCode.toDataURL(qr);
+  } catch (err) {
+    console.error("Error generating QR code:", err);
+  }
+
+  QRCode.toString(qr, { type: "terminal" }, (err, url) => {
+    if (err) console.error("Error displaying QR code in terminal:", err);
+  });
 });
 
 client.on("ready", () => {
   console.log("Connected");
+  isClientReady = true;
 });
 
 client.on("message", async (msg) => {
@@ -362,6 +373,21 @@ O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar com
 
 const app = express();
 app.use(bodyParser.json());
+
+app.get("/", (req, res) => {
+  if (isClientReady) {
+    res.send(`
+          <h1>WhatsApp Client Connected</h1>
+          <p>The WhatsApp client is successfully connected.</p>
+      `);
+  } else {
+    res.send(`
+          <h1>WhatsApp QR Code</h1>
+          <img src="${qrCodeImageData}" alt="QR Code" />
+          <p>Please scan the QR code to connect.</p>
+      `);
+  }
+});
 
 app.post("/rd-webhook", (req, res) => {
   const leads = req.body.leads;
