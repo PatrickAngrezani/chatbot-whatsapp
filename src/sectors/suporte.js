@@ -61,9 +61,13 @@ client.on("message", async (msg) => {
         );
 
         if (hasGreetings && numberOfWords <= 6) {
-          await welcomeMessage(hasService).then((result) => msg.reply(result));
+          await welcomeMessage(hasService).then((result) =>
+            client.sendMessage(`${msgFrom}`, result)
+          );
         } else if (options.includes(clientMessage)) {
-          showOptions(clientMessage).then((result) => msg.reply(result));
+          showOptions(clientMessage).then((result) =>
+            client.sendMessage(`${msgFrom}`, result)
+          );
         }
         await generalFunctions.saveService(
           msgFrom.split("@")[0],
