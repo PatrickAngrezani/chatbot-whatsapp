@@ -57,7 +57,7 @@ client.on("message", async (msg) => {
   const numberOfWords = clientMessage.split(" ").length;
 
   if (!generalFunctions.companyNumbers.includes(msgFrom)) {
-  if (dateMsg >= timeStarted) {
+    if (dateMsg >= timeStarted) {
       if (!isGroupMessage) {
         const hasService = await generalFunctions.hasService(
           msgFrom.split("@")[0]
@@ -67,17 +67,25 @@ client.on("message", async (msg) => {
         );
 
         if (hasGreetings && numberOfWords <= 4) {
-          await welcomeMessage(hasService).then((result) => msg.reply(result));
-          await showMenu(clientMessage).then((result) => msg.reply(result));
+          await welcomeMessage(hasService).then((result) =>
+            client.sendMessage(`${msgFrom}`, result)
+          );
+          await showMenu(clientMessage).then((result) =>
+            client.sendMessage(`${msgFrom}`, result)
+          );
         } else if (options.includes(clientMessage)) {
           if (clientMessage == "8") {
-            await replyCancelContract().then((result) => msg.reply(result));
+            await replyCancelContract().then((result) =>
+              client.sendMessage(`${msgFrom}`, result)
+            );
           } else {
-            showOptions(clientMessage).then((result) => msg.reply(result));
+            showOptions(clientMessage).then((result) =>
+              client.sendMessage(`${msgFrom}`, result)
+            );
           }
         } else if (clientMessage == "r" || clientMessage == "h") {
           await displayCancelContract(clientMessage).then((result) =>
-            msg.reply(result)
+            client.sendMessage(`${msgFrom}`, result)
           );
         }
         await generalFunctions.saveService(
