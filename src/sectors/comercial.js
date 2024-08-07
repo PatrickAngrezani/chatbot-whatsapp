@@ -382,14 +382,14 @@ O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar com
 const app = express();
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   if (isClientReady) {
-      res.send(`
+    res.send(`
           <h1>WhatsApp Client Connected</h1>
           <p>The WhatsApp client is successfully connected.</p>
       `);
   } else {
-      res.send(`
+    res.send(`
           <h1>WhatsApp QR Code</h1>
           <img src="/qrcode" alt="QR Code" />
           <p>Please scan the QR code to connect.</p>
@@ -397,15 +397,20 @@ app.get('/', (req, res) => {
   }
 });
 
-app.get('/qrcode', (req, res) => {
+app.get("/qrcode", (req, res) => {
   if (qrCodeBuffer) {
-      console.log('Serving QR Code buffer');
-      res.setHeader('Content-Type', 'image/png');
-      res.send(qrCodeBuffer);
+    console.log("Serving QR Code buffer");
+    res.setHeader("Content-Type", "image/png");
+    res.send(qrCodeBuffer);
   } else {
-      console.log('QR Code not available');
-      res.status(503).send('QR Code not available');
+    console.log("QR Code not available");
+    res.status(503).send("QR Code not available");
   }
+});
+
+app.post("/testing-webhook", (req, res) => {
+  console.log("webhook working");
+  res.send("webhook working");
 });
 
 app.post("/rd-webhook", (req, res) => {
