@@ -61,7 +61,6 @@ const dddSouthEast = [
 ];
 
 const greetings = require("./greetings");
-const { Pool } = require("pg");
 
 const greetingsForm = `Olá! 👋 Somos da InfyMedia!
 
@@ -386,26 +385,6 @@ async function updateDayTime(currentDayTime) {
   return currentDayTime;
 }
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
-
-async function healthcheck(res) {
-  try {
-    const client = await pool.connect();
-    await client.query("SELECT NOW()");
-    client.release();
-    console.log("database connection succesfully checked through healthcheck");
-    res.status(200).json({ status: "UP", database: "Connected" });
-  } catch (error) {
-    console.error("Error connecting to the database:", error);
-    res.status(500).json({ status: "DOWN", error: error.message });
-  }
-}
-
 module.exports = {
   loadServices,
   hasService,
@@ -418,6 +397,4 @@ module.exports = {
   formQuestionsRadioIndoor,
   greetingsForm,
   formQuestionsInfyads,
-  pool,
-  healthcheck,
 };
