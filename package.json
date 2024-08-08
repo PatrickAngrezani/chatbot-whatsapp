@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ./src/sectors/comercial.js --name chatbot-infymedia"
+    "start": "node ./src/sectors/comercial.js"
   },
   "keywords": [],
   "author": "",
