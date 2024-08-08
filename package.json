@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src/sectors/comercial.js"
+    "start": "pm2 start ./src/sectors/comercial.js"
   },
   "keywords": [],
   "author": "",
