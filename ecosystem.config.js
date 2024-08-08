@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "chatbot-infymedia",
-      script: "pm2 start ./src/sectors/comercial.js --name chatbot-infymedia",
+      script: "./src/sectors/comercial.js",
       instances: 1,
       autorestart: true,
       watch: true,
