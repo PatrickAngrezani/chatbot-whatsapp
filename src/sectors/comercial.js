@@ -42,8 +42,6 @@ const client = new Client({
   },
 });
 
-const pool = generalFunctions.pool;
-
 client.on("qr", async (qr) => {
   try {
     qrCodeBuffer = await QRCode.toBuffer(qr);
