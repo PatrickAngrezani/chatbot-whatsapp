@@ -51,7 +51,6 @@ client.on("qr", async (qr) => {
 
   QRCode.toString(qr, { type: "terminal" }, (err, url) => {
     if (err) console.error("Error displaying QR code in terminal:", err);
-    console.log(url);
   });
 });
 
@@ -405,6 +404,15 @@ app.get("/qrcode", (req, res) => {
   } else {
     console.log("QR Code not available");
     res.status(503).send("QR Code not available");
+  }
+});
+
+app.get("/health-check", async (req, res) => {
+  try {
+    await generalFunctions.healthcheck(res);
+  } catch (error) {
+    console.error("Error getting healthcheck:", error);
+    res.status(500).json({ error: error.message });
   }
 });
 
