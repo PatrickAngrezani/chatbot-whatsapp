@@ -2,6 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 const serviceMapFilePath = "../../service-map.json";
 fs.writeFileSync(serviceMapFilePath, JSON.stringify({}), "utf8");
+const nodemailer = require("nodemailer");
 
 let daytime = require("../hour-time");
 const timeStarted = new Date().toLocaleString();
@@ -9,7 +10,7 @@ const timeStarted = new Date().toLocaleString();
 const express = require("express");
 const bodyParser = require("body-parser");
 const { Client, LocalAuth } = require("whatsapp-web.js");
-const qrcode = require("qrcode-terminal");
+const qrcode = require("qrcode");
 const servicesAndProducts = require("../options/comercial/services-and-products");
 const plansAndValues = require("../options/comercial/plans-and-values");
 const partnershipsAndAdvertising = require("../options/comercial/partnerships-and-advertising");
@@ -39,8 +40,42 @@ const client = new Client({
   },
 });
 
+async function sendQRCodeByEmail(qrCodeFilePath) {
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_SUPORTE,
+      pass: process.env.EMAIL_SUPORTE_PASS,
+    },
+  });
+
+  let mailOptions = {
+    from: process.env.EMAIL_SUPORTE,
+    to: process.env.EMAIL_COMERCIAL,
+    subject: "Your WhatsApp QR Code",
+    text: "Por favor, escaneie esse QRCode com seu aplicativo do WhatsApp para conectar ao bot.",
+    attachments: [
+      {
+        filename: "qrcode.png",
+        path: qrCodeFilePath,
+      },
+    ],
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log("QR code sent via email.");
+}
+
 client.on("qr", async (qr) => {
-  qrcode.generate(qr, { small: true });
+  try {
+    const qrCodeFilePath = "qrcode.png";
+    await qrcode.toFile(qrCodeFilePath, qr);
+    console.log("QR code saved as qrcode.png");
+
+    await sendQRCodeByEmail(qrCodeFilePath);
+  } catch (err) {
+    console.error("Failed to generate or send QR code:", err);
+  }
 });
 
 client.on("ready", () => {
@@ -257,13 +292,11 @@ async function showOptions(option) {
 
 client.initialize();
 
-const nodemailer = require("nodemailer");
-
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL_COMERCIAL,
+    pass: process.env.EMAIL_COMERCIAL_PASS,
   },
 });
 
@@ -283,7 +316,7 @@ client.on("receive-form", async (form) => {
   let dayTimeFreetings = daytime.split("!")[0];
 
   let mailOptions = {
-    from: process.env.EMAIL_USER,
+    from: process.env.EMAIL_COMERCIAL,
     to: `${leadEmail}`,
     subject: "Formulário InfyMedia",
     html: `${dayTimeFreetings}, ${
