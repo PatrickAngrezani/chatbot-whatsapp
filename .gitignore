@@ -1,0 +1,6 @@
+node_modules
+service-map.json
+funcionalities.txt
+.wwebjs_auth
+.env
+Dockerfile
