@@ -409,7 +409,7 @@ app.get("/qrcode", (req, res) => {
 
 app.get("/health-check", async (req, res) => {
   try {
-    await generalFunctions.healthcheck(res);
+    res.status(200).send("OK");
   } catch (error) {
     console.error("Error getting healthcheck:", error);
     res.status(500).json({ error: error.message });
