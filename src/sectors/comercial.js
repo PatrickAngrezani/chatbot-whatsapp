@@ -27,6 +27,7 @@ const comercialMenu = require("../options/menu/comercial-menu");
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const generalFunctions = require("./general/general");
 const conversationState = {};
+let emailComercialSent = false;
 
 const client = new Client({
   puppeteer: {
@@ -64,15 +65,18 @@ async function sendQRCodeByEmail(qrCodeFilePath) {
 
   await transporter.sendMail(mailOptions);
   console.log("QR code sent via email.");
+  emailComercialSent = true;
 }
 
 client.on("qr", async (qr) => {
   try {
-    const qrCodeFilePath = "qrcode.png";
-    await qrcode.toFile(qrCodeFilePath, qr);
-    console.log("QR code saved as qrcode.png");
+    if (!emailComercialSent) {
+      const qrCodeFilePath = "qrcode.png";
+      await qrcode.toFile(qrCodeFilePath, qr);
+      console.log("QR code saved as qrcode.png");
 
-    await sendQRCodeByEmail(qrCodeFilePath);
+      await sendQRCodeByEmail(qrCodeFilePath);
+    }
   } catch (err) {
     console.error("Failed to generate or send QR code:", err);
   }
@@ -80,7 +84,6 @@ client.on("qr", async (qr) => {
 
 client.on("ready", () => {
   console.log("Connected");
-  isClientReady = true;
 });
 
 client.on("message", async (msg) => {
