@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "pm2 start ./src/sectors/comercial.js"
+    "start": "node start ./src/sectors/comercial.js"
   },
   "keywords": [],
   "author": "",
@@ -22,8 +22,5 @@
     "qrcode-terminal": "^0.12.0",
     "rimraf": "^6.0.1",
     "whatsapp-web.js": "^1.25.0"
-  },
-  "devDependencies": {
-    "pm2": "^5.4.2"
   }
 }
