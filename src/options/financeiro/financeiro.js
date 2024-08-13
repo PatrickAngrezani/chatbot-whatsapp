@@ -52,9 +52,13 @@ client.on("message", async (msg) => {
   const clientMessage = msg.body.toLowerCase();
 
   if (saudacoes.includes(clientMessage)) {
-    await welcomeMessage(true).then((result) => msg.reply(result));
+    await welcomeMessage(true).then((result) =>
+      client.sendMessage(`${msgFrom}`, result)
+    );
   } else if (options.includes(clientMessage)) {
-    showOptions(clientMessage).then((result) => msg.reply(result));
+    showOptions(clientMessage).then((result) =>
+      client.sendMessage(`${msgFrom}`, result)
+    );
   }
 });
 
