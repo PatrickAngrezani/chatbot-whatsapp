@@ -68,6 +68,14 @@ async function sendQRCodeByEmail(qrCodeFilePath) {
   emailComercialSent = true;
 }
 
+function formatName1CapitalLetter(name) {
+  if (name) {
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  } else {
+    console.error("missing lead name");
+  }
+}
+
 client.on("qr", async (qr) => {
   try {
     if (!emailComercialSent) {
@@ -317,14 +325,15 @@ client.on("receive-form", async (form) => {
   let numberArgument;
   const linkWhatsApp = "https://wa.me/5511942700889";
   let dayTimeFreetings = daytime.split("!")[0];
+  const firstNameLead = leadName.split(" ")[0];
+
+  const formattedLeadFirstName = formatName1CapitalLetter(firstNameLead);
 
   let mailOptions = {
     from: process.env.EMAIL_COMERCIAL,
     to: `${leadEmail}`,
     subject: "Formulário InfyMedia",
-    html: `${dayTimeFreetings}, ${
-      leadName.split(" ")[0]
-    }! Espero que recebas essa mensagem bem!<br><br>
+    html: `${dayTimeFreetings}, ${formattedLeadFirstName}! Espero que recebas essa mensagem bem!<br><br>
 
 Meu nome é Raphael Caires, responsável pelo setor Comercial da InfyMedia.<br><br>
     
@@ -361,16 +370,12 @@ Atenciosamente, Raphael Caires -  <a href="${linkWhatsApp}">Meu WhatsApp</a>.<br
 
   const destinataryNumber = `${conversationState[numberArgument].number}@c.us`;
   const formGreeting = leadRadioIndoor
-    ? `Olá, ${
-        leadName.split(" ")[0]
-      }!👋 Somos da InfyMedia! Vejo que fala da empresa ${leadCompany}
+    ? `Olá, ${formattedLeadFirstName}!👋 Somos da InfyMedia! Vejo que fala da empresa ${leadCompany}
 
 Recebemos sua solicitação de contato através do nosso site!
 
 O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar como podemos ajudar. Por isso, vamos fazer algumas perguntas, ok?`
-    : `Olá, ${
-        leadName.split(" ")[0]
-      }!👋 Somos da InfyMedia! Vejo que fala da empresa ${leadCompany} e gostaria de anunciar a marca ${brandToBeAnnounced}.
+    : `Olá, ${formattedLeadFirstName}!👋 Somos da InfyMedia! Vejo que fala da empresa ${leadCompany} e gostaria de anunciar a marca ${brandToBeAnnounced}.
 
 Recebemos sua solicitação de contato através do nosso site!
 
