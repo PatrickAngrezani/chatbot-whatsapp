@@ -91,11 +91,18 @@ client.on("message", async (msg) => {
   const dateMsg = new Date(timestamp * 1000).toLocaleString();
   const clientMessage = msg.body.toLowerCase();
   const msgFrom = msg.from;
-  const msgAuthor = msg.author;
   const isGroupMessage = msgFrom.includes("g");
   const numberOfWords = clientMessage.split(" ").length;
+  const formattedNumber = msgFrom.split("@")[0];
 
-  const state = conversationState[msgFrom.split("@")[0]];
+  const state = conversationState[formattedNumber];
+
+  if (generalFunctions.ignoredNumbers[formattedNumber]) {
+    console.log(
+      `Ignoring message from ${senderNumber} because of recent manual interaction.`
+    );
+    return;
+  }
 
   if (state && state.type === "RadioIndoor") {
     const currentQuestionIndex = state.currentQuestion;
@@ -118,7 +125,7 @@ client.on("message", async (msg) => {
           isValidResponse(
             currentQuestionIndex,
             clientMessage,
-            msgFrom.split("@")[0],
+            formattedNumber,
             `${state.type}`
           )
         ) {
@@ -173,7 +180,7 @@ client.on("message", async (msg) => {
           isValidResponse(
             currentQuestionIndex,
             clientMessage,
-            msgFrom.split("@")[0],
+            formattedNumber,
             `${state.type}`
           )
         ) {
@@ -208,49 +215,36 @@ client.on("message", async (msg) => {
       console.error("Error getting Current question object");
     }
   } else {
-    if (!generalFunctions.companyNumbers.includes(msgFrom)) {
-      if (dateMsg >= timeStarted) {
-        if (!isGroupMessage) {
-          const hasService = await generalFunctions.hasService(
-            msgFrom.split("@")[0]
-          );
-          const hasGreetings = await generalFunctions.checkGreetings(
-            clientMessage
-          );
-
-          if (hasGreetings && numberOfWords <= 6) {
-            await welcomeMessage(hasService).then((result) =>
-              client.sendMessage(`${msgFrom}`, result)
-            );
-          } else if (options.includes(clientMessage)) {
-            showOptions(clientMessage).then((result) =>
-              client.sendMessage(`${msgFrom}`, result)
-            );
-          }
-          await generalFunctions.saveService(
-            msgFrom.split("@")[0],
-            dateMsg,
-            clientMessage
-          );
-        } else {
-          // if (saudacoes.includes(clientMessage)) {
-          //   await welcomeMessageGroup(true).then((result) => msg.reply(result));
-          // } else if (options.includes(clientMessage)) {
-          //   showOptionsGroup(clientMessage).then((result) => msg.reply(result));
-          // }
-          await generalFunctions.saveService(
-            msgAuthor.split("@")[0],
-            dateMsg,
-            clientMessage
-          );
-        }
-      } else {
-        console.log("Message sent before bot start");
-      }
-    } else {
+    if (generalFunctions.companyNumbers.includes(msgFrom)) {
       console.log("Message didn't answered because is from a company number");
+      return;
     }
   }
+
+  if (!dateMsg >= timeStarted) {
+    console.log("Message sent before bot start");
+    return;
+  }
+
+  if (isGroupMessage) {
+    console.log("Message from a group message");
+    return;
+  }
+
+  const hasService = await generalFunctions.hasService(formattedNumber);
+  const hasGreetings = await generalFunctions.checkGreetings(clientMessage);
+
+  if (hasGreetings && numberOfWords <= 6) {
+    await welcomeMessage(hasService).then((result) =>
+      client.sendMessage(`${msgFrom}`, result)
+    );
+  } else if (options.includes(clientMessage)) {
+    showOptions(clientMessage).then((result) =>
+      client.sendMessage(`${msgFrom}`, result)
+    );
+  }
+  
+  await generalFunctions.saveService(formattedNumber, dateMsg, clientMessage);
 });
 
 async function welcomeMessage(hasService) {
