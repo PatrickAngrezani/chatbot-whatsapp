@@ -327,7 +327,8 @@ client.on("receive-form", async (form) => {
   let dayTimeFreetings = daytime.split("!")[0];
   const firstNameLead = leadName.split(" ")[0];
 
-  const formattedLeadFirstName = formatName1CapitalLetter(firstNameLead);
+  const formattedLeadFirstName =
+    generalFunctions.formatName1CapitalLetter(firstNameLead);
 
   let mailOptions = {
     from: process.env.EMAIL_COMERCIAL,
