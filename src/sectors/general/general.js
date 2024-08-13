@@ -393,6 +393,24 @@ function formatName1CapitalLetter(name) {
   }
 }
 
+let ignoredNumbers = {};
+
+function stopBotTemporaily(manualInteraction, number) {
+  manualInteraction = true;
+  console.log(
+    `Manual interaction detected in talks with ${number}. Bot is paused.`
+  );
+
+  if (ignoredNumbers[number]) {
+    clearTimeout(ignoredNumbers[number]);
+  }
+
+  ignoredNumbers[number] = setTimeout(() => {
+    delete ignoredNumbers[number];
+    console.log(`Bot reactivated for ${number} after inactivity.`);
+  }, 500000);
+}
+
 module.exports = {
   loadServices,
   hasService,
@@ -406,4 +424,6 @@ module.exports = {
   greetingsForm,
   formQuestionsInfyads,
   formatName1CapitalLetter,
+  ignoredNumbers,
+  stopBotTemporaily,
 };
