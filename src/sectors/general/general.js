@@ -385,6 +385,14 @@ async function updateDayTime(currentDayTime) {
   return currentDayTime;
 }
 
+function formatName1CapitalLetter(name) {
+  if (name) {
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  } else {
+    console.error("missing lead name");
+  }
+}
+
 module.exports = {
   loadServices,
   hasService,
@@ -397,4 +405,5 @@ module.exports = {
   formQuestionsRadioIndoor,
   greetingsForm,
   formQuestionsInfyads,
+  formatName1CapitalLetter,
 };
