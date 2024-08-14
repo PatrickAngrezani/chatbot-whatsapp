@@ -103,7 +103,12 @@ client.on("message", async (msg) => {
   const numberOfWords = clientMessage.split(" ").length;
   const formattedNumber = msgFrom.split("@")[0];
 
-  const state = conversationState[formattedNumber];
+  const state =
+    conversationState[`${formattedNumber}`] ||
+    generalFunctions.createConversationState(
+      conversationState,
+      formattedNumber
+    );
 
   if (generalFunctions.ignoredNumbers[formattedNumber]) {
     console.log(
@@ -112,7 +117,7 @@ client.on("message", async (msg) => {
     return;
   }
 
-  if (state && state.type === "RadioIndoor") {
+  if (state && state.answeringQuestions && state.type === "RadioIndoor") {
     const currentQuestionIndex = state.currentQuestion;
     const currentQuestionObj =
       generalFunctions.formQuestionsRadioIndoor[currentQuestionIndex];
@@ -152,7 +157,9 @@ client.on("message", async (msg) => {
         } else {
           await client.sendMessage(
             `${msgFrom}`,
-            `Resposta inválida, por favor responda conforme as alternativas acima`
+            `Resposta inválida, por favor responda conforme as alternativas acima
+            
+*Caso prefira não receber nosso atendimento automático pelos próximos 30 minutos, digite Q.`
           );
         }
       } else if (currentQuestionObj.type === "open-ended") {
@@ -167,7 +174,7 @@ client.on("message", async (msg) => {
     } else {
       console.error("Error getting Current question object");
     }
-  } else if (state && state.type === "Infyads") {
+  } else if (state && state.answeringQuestions && state.type === "Infyads") {
     const currentQuestionIndex = state.currentQuestion;
     const currentQuestionObj =
       generalFunctions.formQuestionsInfyads[currentQuestionIndex];
@@ -207,7 +214,11 @@ client.on("message", async (msg) => {
         } else {
           await client.sendMessage(
             `${msgFrom}`,
-            `Resposta inválida, por favor responda conforme as alternativas acima`
+            `Resposta inválida, por favor responda conforme as alternativas acima
+            
+
+*Caso prefira não receber nosso atendimento automático pelos próximos 30 minutos, digite Q.
+            `
           );
         }
       } else if (currentQuestionObj.type === "open-ended") {
@@ -222,36 +233,36 @@ client.on("message", async (msg) => {
     } else {
       console.error("Error getting Current question object");
     }
-  } else {
+  } else if (state.answeringQuestions === false) {
     if (generalFunctions.companyNumbers.includes(msgFrom)) {
       console.log("Message didn't answered because is from a company number");
       return;
     }
+
+    if (!dateMsg >= timeStarted) {
+      console.log("Message sent before bot start");
+      return;
+    }
+
+    if (isGroupMessage) {
+      console.log("Message from a group message");
+      return;
+    }
+
+    const hasService = await generalFunctions.hasService(formattedNumber);
+    const hasGreetings = await generalFunctions.checkGreetings(clientMessage);
+
+    if (hasGreetings && numberOfWords <= 6) {
+      await welcomeMessage(hasService).then((result) =>
+        client.sendMessage(`${msgFrom}`, result)
+      );
+    } else if (options.includes(clientMessage)) {
+      showOptions(clientMessage).then((result) =>
+        client.sendMessage(`${msgFrom}`, result)
+      );
+    }
   }
 
-  if (!dateMsg >= timeStarted) {
-    console.log("Message sent before bot start");
-    return;
-  }
-
-  if (isGroupMessage) {
-    console.log("Message from a group message");
-    return;
-  }
-
-  const hasService = await generalFunctions.hasService(formattedNumber);
-  const hasGreetings = await generalFunctions.checkGreetings(clientMessage);
-
-  if (hasGreetings && numberOfWords <= 6) {
-    await welcomeMessage(hasService).then((result) =>
-      client.sendMessage(`${msgFrom}`, result)
-    );
-  } else if (options.includes(clientMessage)) {
-    showOptions(clientMessage).then((result) =>
-      client.sendMessage(`${msgFrom}`, result)
-    );
-  }
-  
   await generalFunctions.saveService(formattedNumber, dateMsg, clientMessage);
 });
 
@@ -351,17 +362,16 @@ Atenciosamente, Raphael Caires -  <a href="${linkWhatsApp}">Meu WhatsApp</a>.<br
       : stringNumber8Digits;
   }
 
+  let state = {};
   if (!conversationState[numberArgument]) {
-    conversationState[numberArgument] = {
-      company: leadCompany,
-      currentQuestion: 0,
-      responses: [],
-      awaitingDetail: false,
-      number: numberArgument,
-      email: leadEmail,
-      answeringQuestions: true,
-    };
+    state = generalFunctions.createConversationState(
+      conversationState,
+      numberArgument
+    );
   }
+  state["company"] = leadCompany;
+  state["email"] = leadEmail;
+  state["answeringQuestions"] = true;
 
   const destinataryNumber = `${conversationState[numberArgument].number}@c.us`;
   const formGreeting = leadRadioIndoor
@@ -473,15 +483,11 @@ app.listen(PORT, () => {
 
 async function sendNextFormQuestion(number, type) {
   const client_ = client;
+  const formattedNumber = number.split("@")[0];
+
   if (type === "RadioIndoor") {
-    const state = conversationState[number.split("@")[0]] || {
-      currentQuestion: 0,
-      responses: [],
-      awaitingDetail: false,
-      number: number.split("@")[0],
-      answeringQuestions: true,
-      type: "RadioIndoor",
-    };
+    const state = conversationState[formattedNumber];
+    state.type = "RadioIndoor";
 
     const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
 
@@ -516,14 +522,9 @@ async function sendNextFormQuestion(number, type) {
       delete conversationState[number];
     }
   } else if (type === "Infyads") {
-    const state = conversationState[number.split("@")[0]] || {
-      currentQuestion: 0,
-      responses: [],
-      awaitingDetail: false,
-      number: number.split("@")[0],
-      answeringQuestions: true,
-      type: "Infyads",
-    };
+    const state = conversationState[formattedNumber];
+    state.type = "Infyads";
+
     const formQuestionsInfyads = generalFunctions.formQuestionsInfyads;
 
     if (state.currentQuestion < formQuestionsInfyads.length) {

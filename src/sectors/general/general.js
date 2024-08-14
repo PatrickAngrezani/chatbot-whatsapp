@@ -411,6 +411,22 @@ function stopBotTemporaily(manualInteraction, number) {
   }, 500000);
 }
 
+function createConversationState(conversationState, numberArgument) {
+  conversationState[numberArgument] = {
+    currentQuestion: 0,
+    responses: [],
+    awaitingDetail: false,
+    number: numberArgument,
+    answeringQuestions: false,
+    botActive: true,
+    company: "",
+    email: "",
+    answeringQuestions: "",
+  };
+
+  return conversationState[numberArgument];
+}
+
 module.exports = {
   loadServices,
   hasService,
@@ -426,4 +442,5 @@ module.exports = {
   formatName1CapitalLetter,
   ignoredNumbers,
   stopBotTemporaily,
+  createConversationState,
 };
