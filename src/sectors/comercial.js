@@ -102,157 +102,172 @@ client.on("message", async (msg) => {
       formattedNumber
     );
 
-  if (generalFunctions.ignoredNumbers[formattedNumber]) {
-    console.log(
-      `Ignoring message from ${senderNumber} because of recent manual interaction.`
-    );
-    return;
-  }
+  switch (true) {
+    case state.botActive === false:
+      console.log(`Ignoring message, bot is inactive to ${formattedNumber}`);
+      break;
 
-  if (state && state.answeringQuestions && state.type === "RadioIndoor") {
-    const currentQuestionIndex = state.currentQuestion;
-    const currentQuestionObj =
-      generalFunctions.formQuestionsRadioIndoor[currentQuestionIndex];
+    case state && state.answeringQuestions && state.type === "RadioIndoor":
+      const currentQuestionIndexRadio = state.currentQuestion;
+      const currentQuestionObjRadio =
+        generalFunctions.formQuestionsRadioIndoor[currentQuestionIndexRadio];
 
-    if (currentQuestionObj) {
-      if (state.awaitingDetail) {
-        currentQuestionObj.validAnswers = state.responses.push({
-          question: `${currentQuestionObj.question} (Detail)`,
-          answer: clientMessage,
-        });
+      if (currentQuestionObjRadio) {
+        if (state.awaitingDetail) {
+          currentQuestionObjRadio.validAnswers = state.responses.push({
+            question: `${currentQuestionObjRadio.question} (Detail)`,
+            answer: clientMessage,
+          });
 
-        state.awaitingDetail = false;
-        state.currentQuestion++;
+          state.awaitingDetail = false;
+          state.currentQuestion++;
 
-        await sendNextFormQuestion(msgFrom, `${state.type}`);
-      } else if (currentQuestionObj.type === "multiple-choice") {
-        if (
-          isValidResponse(
-            currentQuestionIndex,
-            clientMessage,
-            formattedNumber,
-            `${state.type}`
-          )
-        ) {
-          if (clientMessage === currentQuestionObj.requiresDetail) {
-            state.awaitingDetail = true;
-            await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+          await sendNextFormQuestion(msgFrom, `${state.type}`);
+        } else if (currentQuestionObjRadio.type === "multiple-choice") {
+          if (
+            isValidResponse(
+              currentQuestionIndexRadio,
+              clientMessage,
+              formattedNumber,
+              `${state.type}`
+            )
+          ) {
+            if (clientMessage === currentQuestionObjRadio.requiresDetail) {
+              state.awaitingDetail = true;
+              await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+            } else {
+              state.responses.push({
+                question: currentQuestionObjRadio.question,
+                answer: clientMessage,
+              });
+              state.currentQuestion++;
+
+              await sendNextFormQuestion(msgFrom, `${state.type}`);
+            }
           } else {
-            state.responses.push({
-              question: currentQuestionObj.question,
-              answer: clientMessage,
-            });
-            state.currentQuestion++;
-
-            await sendNextFormQuestion(msgFrom, `${state.type}`);
+            await client.sendMessage(
+              `${msgFrom}`,
+              `Resposta inválida, por favor responda conforme as alternativas acima.
+    
+*Caso prefira não receber nosso atendimento automático pelos próximos 30 minutos, digite W.`
+            );
           }
-        } else {
-          await client.sendMessage(
-            `${msgFrom}`,
-            `Resposta inválida, por favor responda conforme as alternativas acima
-            
-*Caso prefira não receber nosso atendimento automático pelos próximos 30 minutos, digite Q.`
-          );
+        } else if (currentQuestionObjRadio.type === "open-ended") {
+          state.responses.push({
+            question: currentQuestionObjRadio.question,
+            answer: clientMessage,
+          });
+          state.currentQuestion++;
+
+          await sendNextFormQuestion(msgFrom, `${state.type}`);
         }
-      } else if (currentQuestionObj.type === "open-ended") {
-        state.responses.push({
-          question: currentQuestionObj.question,
-          answer: clientMessage,
-        });
-        state.currentQuestion++;
-
-        await sendNextFormQuestion(msgFrom, `${state.type}`);
+      } else {
+        console.error("Error getting Current question object");
       }
-    } else {
-      console.error("Error getting Current question object");
-    }
-  } else if (state && state.answeringQuestions && state.type === "Infyads") {
-    const currentQuestionIndex = state.currentQuestion;
-    const currentQuestionObj =
-      generalFunctions.formQuestionsInfyads[currentQuestionIndex];
+      break;
 
-    if (currentQuestionObj) {
-      if (state.awaitingDetail) {
-        currentQuestionObj.validAnswers = state.responses.push({
-          question: `${currentQuestionObj.question} (Detail)`,
-          answer: clientMessage,
-        });
+    case state && state.answeringQuestions && state.type === "Infyads":
+      const currentQuestionIndexInfyads = state.currentQuestion;
+      const currentQuestionObjInfyads =
+        generalFunctions.formQuestionsInfyads[currentQuestionIndexInfyads];
 
-        state.awaitingDetail = false;
-        state.currentQuestion++;
+      if (currentQuestionObjInfyads) {
+        if (state.awaitingDetail) {
+          currentQuestionObjInfyads.validAnswers = state.responses.push({
+            question: `${currentQuestionObjInfyads.question} (Detail)`,
+            answer: clientMessage,
+          });
 
-        await sendNextFormQuestion(msgFrom, `${state.type}`);
-      } else if (currentQuestionObj.type === "multiple-choice") {
-        if (
-          isValidResponse(
-            currentQuestionIndex,
-            clientMessage,
-            formattedNumber,
-            `${state.type}`
-          )
-        ) {
-          if (clientMessage === currentQuestionObj.requiresDetail) {
-            state.awaitingDetail = true;
-            await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+          state.awaitingDetail = false;
+          state.currentQuestion++;
+
+          await sendNextFormQuestion(msgFrom, `${state.type}`);
+        } else if (currentQuestionObjInfyads.type === "multiple-choice") {
+          if (
+            isValidResponse(
+              currentQuestionIndexInfyads,
+              clientMessage,
+              formattedNumber,
+              `${state.type}`
+            )
+          ) {
+            if (clientMessage === currentQuestionObjInfyads.requiresDetail) {
+              state.awaitingDetail = true;
+              await client.sendMessage(`${msgFrom}`, "Por favor, especifique:");
+            } else {
+              state.responses.push({
+                question: currentQuestionObjInfyads.question,
+                answer: clientMessage,
+              });
+              state.currentQuestion++;
+
+              await sendNextFormQuestion(msgFrom, `${state.type}`);
+            }
           } else {
-            state.responses.push({
-              question: currentQuestionObj.question,
-              answer: clientMessage,
-            });
-            state.currentQuestion++;
+            const messageW = checkExitMessageW(clientMessage);
 
-            await sendNextFormQuestion(msgFrom, `${state.type}`);
+            if (messageW) {
+              const state = conversationState[formattedNumber];
+
+              client.sendMessage(
+                `${msgFrom}`,
+                "Desligando o bot por 30 minutos..."
+              );
+
+              return generalFunctions.turnOffBot(state);
+            } else {
+              await client.sendMessage(
+                `${msgFrom}`,
+                `Resposta inválida, por favor responda conforme as alternativas acima.
+    
+*Caso prefira não receber nosso atendimento automático pelos próximos 30 minutos, digite W.`
+              );
+            }
           }
-        } else {
-          await client.sendMessage(
-            `${msgFrom}`,
-            `Resposta inválida, por favor responda conforme as alternativas acima
-            
+        } else if (currentQuestionObjInfyads.type === "open-ended") {
+          state.responses.push({
+            question: currentQuestionObjInfyads.question,
+            answer: clientMessage,
+          });
+          state.currentQuestion++;
 
-*Caso prefira não receber nosso atendimento automático pelos próximos 30 minutos, digite Q.
-            `
-          );
+          await sendNextFormQuestion(msgFrom, `${state.type}`);
         }
-      } else if (currentQuestionObj.type === "open-ended") {
-        state.responses.push({
-          question: currentQuestionObj.question,
-          answer: clientMessage,
-        });
-        state.currentQuestion++;
-
-        await sendNextFormQuestion(msgFrom, `${state.type}`);
+      } else {
+        console.error("Error getting Current question object");
       }
-    } else {
-      console.error("Error getting Current question object");
-    }
-  } else if (state.answeringQuestions === false) {
-    if (generalFunctions.companyNumbers.includes(msgFrom)) {
-      console.log("Message didn't answered because is from a company number");
-      return;
-    }
+      break;
 
-    if (!dateMsg >= timeStarted) {
-      console.log("Message sent before bot start");
-      return;
-    }
+    case (state.answeringQuestions === false && clientMessage !== "w") ||
+      (state.answeringQuestions === "" && clientMessage !== "w"):
+      if (generalFunctions.companyNumbers.includes(msgFrom)) {
+        console.log("Message didn't answer because it's from a company number");
+        return;
+      }
 
-    if (isGroupMessage) {
-      console.log("Message from a group message");
-      return;
-    }
+      if (!dateMsg >= timeStarted) {
+        console.log("Message sent before bot start");
+        return;
+      }
 
-    const hasService = await generalFunctions.hasService(formattedNumber);
-    const hasGreetings = await generalFunctions.checkGreetings(clientMessage);
+      if (isGroupMessage) {
+        console.log("Message from a group message");
+        return;
+      }
 
-    if (hasGreetings && numberOfWords <= 6) {
-      await welcomeMessage(hasService).then((result) =>
-        client.sendMessage(`${msgFrom}`, result)
-      );
-    } else if (options.includes(clientMessage)) {
-      showOptions(clientMessage).then((result) =>
-        client.sendMessage(`${msgFrom}`, result)
-      );
-    }
+      const hasService = await generalFunctions.hasService(formattedNumber);
+      const hasGreetings = await generalFunctions.checkGreetings(clientMessage);
+
+      if (hasGreetings && numberOfWords <= 6) {
+        await welcomeMessage(hasService).then((result) =>
+          client.sendMessage(`${msgFrom}`, result)
+        );
+      } else if (options.includes(clientMessage)) {
+        showOptions(clientMessage).then((result) =>
+          client.sendMessage(`${msgFrom}`, result)
+        );
+      }
+      break;
   }
 
   await generalFunctions.saveService(formattedNumber, dateMsg, clientMessage);
@@ -543,12 +558,27 @@ Por favor, aguarde enquanto preparamos tudo para você!`
   }
 }
 
-function isValidResponse(questionIndex, response, number, type) {
+function checkExitMessageW(clientMessage) {
+  if (clientMessage !== "w") {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function isValidResponse(questionIndex, clientMessage, number, type) {
   const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
   const formQuestionsInfyads = generalFunctions.formQuestionsInfyads;
 
   let validAnswers;
   let questionObj;
+
+  const messageW = checkExitMessageW(clientMessage);
+  if (messageW) {
+    const state = conversationState[number];
+
+    return generalFunctions.turnOffBot(state);
+  }
 
   if (type === "RadioIndoor") {
     validAnswers = formQuestionsRadioIndoor[questionIndex].validAnswers;
@@ -568,7 +598,7 @@ function isValidResponse(questionIndex, response, number, type) {
     state.number === number
   ) {
     if (questionObj.type === "multiple-choice" && !questionObj.requiresDetail) {
-      return validAnswers.includes(response.toLowerCase());
+      return validAnswers.includes(clientMessage.toLowerCase());
     }
     return true;
   }
