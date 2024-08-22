@@ -3,5 +3,10 @@ service-map.json
 funcionalities.txt
 .wwebjs_auth
 .env
+<<<<<<< Updated upstream
 Dockerfile
 qrcode.png
+=======
+qrcode.png
+forms-site
+>>>>>>> Stashed changes
