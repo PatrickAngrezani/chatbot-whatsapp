@@ -501,7 +501,13 @@ async function sendNextFormQuestion(number, type) {
   const formattedNumber = number.split("@")[0];
 
   if (type === "RadioIndoor") {
-    const state = conversationState[formattedNumber];
+    const state =
+      conversationState[formattedNumber] ||
+      generalFunctions.createConversationState(
+        conversationState,
+        formattedNumber
+      );
+
     state.type = "RadioIndoor";
 
     const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
@@ -628,4 +634,30 @@ async function sendTeamRadioInstructions(number, instructions) {
   } catch (error) {
     console.error("Erro ao enviar instruções para o time:", error);
   }
+}
+
+async function sendFormRemainsNumbers() {
+  let fileSent = false;
+  let formSents = 0;
+
+  if (!fileSent) {
+    const formattedNumbers = await generalFunctions.formatFormsNumbers();
+
+    for (const number of formattedNumbers) {
+      await client.sendMessage(
+        number,
+        `Olá!👋 Somos da InfyMedia! 
+      
+Recebemos sua solicitação de contato através do nosso site!
+      
+O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar como podemos ajudar. Por isso, vamos fazer algumas perguntas, ok?`
+      );
+
+      await sendNextFormQuestion(number, "RadioIndoor");
+      formSents++;
+    }
+    fileSent = true;
+    console.log(`form sent to ${formSents} numbers`);
+  }
+  console.log("forms already sent");
 }

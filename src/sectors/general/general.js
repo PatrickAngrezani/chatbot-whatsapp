@@ -2,6 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 const timeStarted = new Date().toLocaleString();
 const serviceMapFilePath = "../../service-map.json";
+const XLSX = require("xlsx");
 
 const teammateNames = [
   "caires",
@@ -418,6 +419,25 @@ function turnOffBot(state) {
   return;
 }
 
+async function formatFormsNumbers() {
+  let formattedNumbers = [];
+
+  // const filePath
+  const workbook = XLSX.readFile(filePath5);
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+  const dataJson = XLSX.utils.sheet_to_json(worksheet);
+
+  const phoneNumbers = dataJson.map((row) => row.phone_number);
+
+  for (const number of phoneNumbers) {
+    const formattedNumber = number.split("+")[1] + "@c.us";
+    formattedNumbers.push(formattedNumber);
+  }
+
+  return formattedNumbers;
+}
+
 module.exports = {
   loadServices,
   hasService,
@@ -433,4 +453,5 @@ module.exports = {
   formatName1CapitalLetter,
   createConversationState,
   turnOffBot,
+  formatFormsNumbers,
 };
