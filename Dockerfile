@@ -40,6 +40,9 @@ RUN npm install
 # Copy the app source code
 COPY . .
 
+# Define environment variable to run the file
+ARG APP_FILE
+
 # Expose the port that the app runs on
 EXPOSE 3000
 
@@ -47,4 +50,4 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # Command to run your app using the entrypoint script
-CMD ["node", "./src/sectors/comercial.js"]
+CMD ["sh", "-c", "node /app/src/sectors/$APP_FILE"]
