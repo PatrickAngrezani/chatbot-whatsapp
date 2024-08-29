@@ -1,6 +1,13 @@
 # Use the official Node.js image as the base image
 FROM node:latest
 
+# Set environment variables
+ENV EMAIL_FINANCEIRO=katharine@infymedia.com.br
+ENV EMAIL_COMERCIAL=comercial@infymedia.com.br
+ENV EMAIL_COMERCIAL_PASS="mqco wkvu asjb hxmi"
+ENV EMAIL_SUPORTE=suporte@infymedia.com.br
+ENV EMAIL_SUPORTE_PASS="jpwz bixq ujwv ctcj"
+
 # Install dependencies required by Puppeteer
 RUN apt-get update \
     && apt-get install -y \
@@ -50,4 +57,4 @@ EXPOSE 3000
 ENV NODE_ENV=production
 
 # Command to run your app using the entrypoint script
-CMD ["sh", "-c", "node /app/src/sectors/$APP_FILE"]
+CMD ["sh", "-c", "node ./src/sectors/$APP_FILE"]
