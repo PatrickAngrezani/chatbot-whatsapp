@@ -1,12 +1,13 @@
 const fs = require("fs");
 const serviceMapFilePath = "../../service-map.json";
 fs.writeFileSync(serviceMapFilePath, JSON.stringify({}), "utf8");
+const nodemailer = require("nodemailer");
 
 let daytime = require("../hour-time");
 const timeStarted = new Date().toLocaleString();
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
-const qrcode = require("qrcode-terminal");
+const qrcode = require("qrcode");
 const sectorsOption = require("../options/financeiro/sector-options");
 const bankSlipAndPayment = require("../options/financeiro/bank-slip-and-payment");
 const transferKey = require("../options/financeiro/transfer-key");
@@ -26,6 +27,34 @@ require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"];
 const generalFunctions = require("./general/general");
+let emailFinanceiroSent = false;
+
+async function sendQRCodeByEmail(qrCodeFilePath) {
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_SUPORTE,
+      pass: process.env.EMAIL_SUPORTE_PASS,
+    },
+  });
+
+  let mailOptions = {
+    from: process.env.EMAIL_SUPORTE,
+    to: process.env.EMAIL_FINANCEIRO,
+    subject: "Your WhatsApp QR Code",
+    text: "Por favor, escaneie esse QRCode com seu aplicativo do WhatsApp para conectar ao bot.",
+    attachments: [
+      {
+        filename: "qrcode.png",
+        path: qrCodeFilePath,
+      },
+    ],
+  };
+
+  await transporter.sendMail(mailOptions);
+  console.log("QR code sent via email.");
+  emailFinanceiroSent = true;
+}
 
 const client = new Client({
   puppeteer: {
@@ -39,8 +68,18 @@ const client = new Client({
   },
 });
 
-client.on("qr", (qr) => {
-  qrcode.generate(qr, { small: true });
+client.on("qr", async (qr) => {
+  try {
+    if (!emailFinanceiroSent) {
+      const qrCodeFilePath = "qrcode.png";
+      await qrcode.toFile(qrCodeFilePath, qr);
+      console.log("QR code saved as qrcode.png");
+
+      await sendQRCodeByEmail(qrCodeFilePath);
+    }
+  } catch (err) {
+    console.error("Failed to generate or send QR code:", err);
+  }
 });
 
 client.on("ready", () => {
