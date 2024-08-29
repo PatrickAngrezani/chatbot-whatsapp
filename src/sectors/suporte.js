@@ -49,7 +49,7 @@ async function sendQRCodeByEmail(qrCodeFilePath) {
 
   let mailOptions = {
     from: process.env.EMAIL_SUPORTE,
-    to: process.env.EMAIL_COMERCIAL,
+    to: process.env.EMAIL_SUPORTE,
     subject: "Your WhatsApp QR Code",
     text: "Por favor, escaneie esse QRCode com seu aplicativo do WhatsApp para conectar ao bot.",
     attachments: [
