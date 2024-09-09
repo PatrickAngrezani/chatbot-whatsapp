@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode");
 const nodemailer = require("nodemailer");
+const mongoose = require("mongoose");
 
 const spotOption = require("../options/suporte/spot-option");
 const playerOption = require("../options/suporte/player-option");
@@ -18,6 +19,7 @@ const sectorsOption = require("../options/suporte/sectors-option");
 const menuOptions = require("../options/suporte/menu-options");
 const technicalSupport = require("../options/suporte/technical-support");
 const technicalSupportMenu = require("../options/menu/technical-support-menu");
+const { Form } = require("../database/mongo/formSchema");
 
 require("dotenv").config;
 
@@ -25,6 +27,17 @@ const options = ["1", "2", "3", "4", "5", "6"];
 const generalFunctions = require("./general/general");
 const conversationState = {};
 let emailSuporteSent = false;
+
+const mongoURL = "mongodb://localhost:27017/chatbot-infymedia";
+
+mongoose
+  .connect(mongoURL)
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("Error connecting to MongoDB:", error);
+  });
 
 const client = new Client({
   puppeteer: {
@@ -100,8 +113,6 @@ client.on("message", async (msg) => {
         conversationState,
         formattedNumber
       );
-
-    console.log({ state, clientMessage });
 
     switch (true) {
       case state.botActive === false:
@@ -411,15 +422,15 @@ O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar com
     console.error("Error sending the first question:", error);
   }
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Erro ao enviar e-mail:", error);
-      return { status: 500, message: "Server error trying send email" };
-    } else {
-      console.log("E-mail enviado:", info.response);
-      return { status: 200, message: "Email sent succesfully" };
-    }
-  });
+  // transporter.sendMail(mailOptions, (error, info) => {
+  //   if (error) {
+  //     console.error("Erro ao enviar e-mail:", error);
+  //     return { status: 500, message: "Server error trying send email" };
+  //   } else {
+  //     console.log("E-mail enviado:", info.response);
+  //     return { status: 200, message: "Email sent succesfully" };
+  //   }
+  // });
 });
 
 const app = express();
@@ -574,7 +585,9 @@ function checkExitMessageW(clientMessage) {
   }
 }
 
-function isValidResponse(questionIndex, clientMessage, number, type) {
+async function sendQuestionObjdb(question, response) {}
+
+async function isValidResponse(questionIndex, clientMessage, number, type) {
   const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
   const formQuestionsInfyads = generalFunctions.formQuestionsInfyads;
 
@@ -599,6 +612,11 @@ function isValidResponse(questionIndex, clientMessage, number, type) {
   const state = Object.values(conversationState).find(
     (state) => state.number === number
   );
+
+  const question = questionObj.question;
+  const response = validAnswers.find((answer) => answer === clientMessage);
+
+  await sendQuestionObjdb(question, response);
 
   if (
     state &&
@@ -628,30 +646,4 @@ async function sendTeamRadioInstructions(number, instructions) {
   } catch (error) {
     console.error("Erro ao enviar instruções para o time:", error);
   }
-}
-
-async function sendFormRemainsNumbers() {
-  let fileSent = false;
-  let formSents = 0;
-
-  if (!fileSent) {
-    const formattedNumbers = await generalFunctions.formatFormsNumbers();
-
-    for (const number of formattedNumbers) {
-      await client.sendMessage(
-        number,
-        `Olá!👋 Somos da InfyMedia! 
-      
-Recebemos sua solicitação de contato através do nosso site!
-      
-O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar como podemos ajudar. Por isso, vamos fazer algumas perguntas, ok?`
-      );
-
-      await sendNextFormQuestion(number, "RadioIndoor");
-      formSents++;
-    }
-    fileSent = true;
-    console.log(`form sent to ${formSents} numbers`);
-  }
-  console.log("forms already sent");
 }
