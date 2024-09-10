@@ -78,6 +78,42 @@ async function sendQRCodeByEmail(qrCodeFilePath) {
   emailSuporteSent = true;
 }
 
+function formatDateToBrazil(date) {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth is zero-based
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+async function saveQuestionsResponsesDB(number) {
+  const state = conversationState[number];
+
+  const questions = [];
+  const answers = [];
+
+  state.responses.forEach((response) => {
+    questions.push(response.question);
+    answers.push(response.answer);
+  });
+
+  try {
+    await Form.create({
+      client_phone: number,
+      question: questions,
+      answer: answers,
+      date: formatDateToBrazil(new Date()),
+    });
+
+    console.log(`Form number ${number} saved succesfully`);
+  } catch (error) {
+    console.error(`Error saving database:`, error);
+  }
+}
+
 client.on("qr", async (qr) => {
   try {
     if (!emailSuporteSent) {
@@ -422,24 +458,19 @@ O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar com
     console.error("Error sending the first question:", error);
   }
 
-  // transporter.sendMail(mailOptions, (error, info) => {
-  //   if (error) {
-  //     console.error("Erro ao enviar e-mail:", error);
-  //     return { status: 500, message: "Server error trying send email" };
-  //   } else {
-  //     console.log("E-mail enviado:", info.response);
-  //     return { status: 200, message: "Email sent succesfully" };
-  //   }
-  // });
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Erro ao enviar e-mail:", error);
+      return { status: 500, message: "Server error trying send email" };
+    } else {
+      console.log("E-mail enviado:", info.response);
+      return { status: 200, message: "Email sent succesfully" };
+    }
+  });
 });
 
 const app = express();
 app.use(bodyParser.json());
-
-app.post("/testing-webhook", (req, res) => {
-  console.log("webhook working");
-  res.send("webhook working");
-});
 
 app.post("/rd-webhook", (req, res) => {
   const leads = req.body.leads;
@@ -526,6 +557,8 @@ async function sendNextFormQuestion(number, type) {
         console.error(error);
       }
     } else {
+      await saveQuestionsResponsesDB(formattedNumber);
+
       await client_.sendMessage(
         `${number}`,
         "Todas as perguntas foram respondidas. Obrigado! Em breve um dos nossos profissinais entrará em contato para dar sequência ao atendimento."
