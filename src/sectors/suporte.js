@@ -89,15 +89,35 @@ function formatDateToBrazil(date) {
   return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
 
+function formatResponse(question, answer) {
+  const lines = question.split("\n");
+  const responseLine = lines.find((line) => line.startsWith(`${answer} -`));
+
+  if (!responseLine) {
+    console.error("No matching answer found in the question");
+    return `${answer}`;
+  }
+
+  const formattedResponse = responseLine.split("-")[1].trim();
+
+  return formattedResponse;
+}
+
 async function saveQuestionsResponsesDB(number) {
   const state = conversationState[number];
+  let formattedResponse;
 
   const questions = [];
   const answers = [];
 
   state.responses.forEach((response) => {
-    questions.push(response.question);
-    answers.push(response.answer);
+    const question = response.question;
+    const answer = response.answer;
+
+    formattedResponse = formatResponse(question, answer);
+
+    questions.push(question);
+    answers.push(formattedResponse);
   });
 
   try {
@@ -458,15 +478,15 @@ O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar com
     console.error("Error sending the first question:", error);
   }
 
-  // transporter.sendMail(mailOptions, (error, info) => {
-  //   if (error) {
-  //     console.error("Erro ao enviar e-mail:", error);
-  //     return { status: 500, message: "Server error trying send email" };
-  //   } else {
-  //     console.log("E-mail enviado:", info.response);
-  //     return { status: 200, message: "Email sent succesfully" };
-  //   }
-  // });
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Erro ao enviar e-mail:", error);
+      return { status: 500, message: "Server error trying send email" };
+    } else {
+      console.log("E-mail enviado:", info.response);
+      return { status: 200, message: "Email sent succesfully" };
+    }
+  });
 });
 
 const app = express();
@@ -573,10 +593,10 @@ async function sendNextFormQuestion(number, type) {
         })),
       };
 
-      // await sendTeamRadioInstructions(
-      //   `120363301499456595@g.us`,
-      //   instructionsCreateRadio
-      // );
+      await sendTeamRadioInstructions(
+        `120363301499456595@g.us`,
+        instructionsCreateRadio
+      );
 
       delete conversationState[number];
     }
