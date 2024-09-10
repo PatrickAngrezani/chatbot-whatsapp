@@ -91,84 +91,84 @@ const formQuestionsRadioIndoor = [
     validAnswers: ["1", "2"],
     type: "multiple-choice",
   },
-  //   {
-  //     question: `Gostaria de ter músicas conhecidas que são passíveis de cobrança de ECAD (nosso Plano Hits) ou prefere um acervo exclusivo que isente 100% a taxa de ECAD com garantia jurídica (nosso Plano Royalty Free)?
-  // 1 - Plano Hits
-  // 2 - Plano Royalty Free`,
-  //     validAnswers: ["1", "2"],
-  //     type: "multiple-choice",
-  //   },
-  //   {
-  //     question: `Sua empresa já tem ou gostaria de ter vinhetas, anúncios e spots personalizados?
-  // 1 - Sim
-  // 2 - Não`,
-  //     validAnswers: ["1", "2"],
-  //     type: "multiple-choice",
-  //   },
-  //   {
-  //     question: `Gostaria de fazer parte da nossa rede de cashback da InfyAds, que busca anunciantes para veicular anúncios e, dessa forma, receber cashback?
-  // 1 - Sim
-  // 2 - Não`,
-  //     validAnswers: ["1", "2"],
-  //     type: "multiple-choice",
-  //   },
-  //   {
-  //     question: `Qual é o principal objetivo ao implementar o rádio indoor na sua empresa?
-  // 1 - Entreter os clientes
-  // 2 - Informar sobre produtos e serviços
-  // 3 - Aumentar as vendas
-  // 4 - Outros: (Especifique)`,
-  //     validAnswers: ["1", "2", "3", "4"],
-  //     type: "multiple-choice",
-  //     requiresDetail: "4",
-  //   },
-  //   {
-  //     question: `Qual é o tamanho do seu estabelecimento?
-  // 1 - Pequeno (até 50m²)
-  // 2 - Médio (51m² a 200m²)
-  // 3 - Grande (acima de 200m²)`,
-  //     validAnswers: ["1", "2", "3"],
-  //     type: "multiple-choice",
-  //   },
-  //   {
-  //     question: `Quantos locais ou filiais você pretende equipar com nosso serviço de rádio indoor?
-  // 1 - Um local
-  // 2 - Entre 2 a 5 locais
-  // 3 - Mais de 5 locais`,
-  //     validAnswers: ["1", "2", "3"],
-  //     type: "multiple-choice",
-  //   },
-  //   {
-  //     question: `Qual é a faixa etária predominante do seu público?
-  // 1 - Menos de 18 anos
-  // 2 - 18 a 25 anos
-  // 3 - 26 a 35 anos
-  // 4 - 36 a 50 anos
-  // 5 - Acima de 50 anos`,
-  //     validAnswers: ["1", "2", "3", "4", "5"],
-  //     type: "multiple-choice",
-  //   },
-  //   {
-  //     question: `Qual é a classe social predominante do seu público?
-  // 1 - Classe A
-  // 2 - Classe B
-  // 3 - Classe C
-  // 4 - Classe D`,
-  //     validAnswers: ["1", "2", "3", "4"],
-  //     type: "multiple-choice",
-  //   },
-  //   {
-  //     question: `Qual é o tipo de negócio da sua empresa?
-  // (Resposta aberta)`,
-  //     type: "open-ended",
-  //   },
-  //   {
-  //     question: `Você teria interesse em TV indoor também?
-  // 1 - Sim
-  // 2 - Não`,
-  //     validAnswers: ["1", "2"],
-  //     type: "multiple-choice",
-  //   },
+  {
+    question: `Gostaria de ter músicas conhecidas que são passíveis de cobrança de ECAD (nosso Plano Hits) ou prefere um acervo exclusivo que isente 100% a taxa de ECAD com garantia jurídica (nosso Plano Royalty Free)?
+  1 - Plano Hits
+  2 - Plano Royalty Free`,
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Sua empresa já tem ou gostaria de ter vinhetas, anúncios e spots personalizados?
+  1 - Sim
+  2 - Não`,
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Gostaria de fazer parte da nossa rede de cashback da InfyAds, que busca anunciantes para veicular anúncios e, dessa forma, receber cashback?
+  1 - Sim
+  2 - Não`,
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Qual é o principal objetivo ao implementar o rádio indoor na sua empresa?
+  1 - Entreter os clientes
+  2 - Informar sobre produtos e serviços
+  3 - Aumentar as vendas
+  4 - Outros: (Especifique)`,
+    validAnswers: ["1", "2", "3", "4"],
+    type: "multiple-choice",
+    requiresDetail: "4",
+  },
+  {
+    question: `Qual é o tamanho do seu estabelecimento?
+  1 - Pequeno (até 50m²)
+  2 - Médio (51m² a 200m²)
+  3 - Grande (acima de 200m²)`,
+    validAnswers: ["1", "2", "3"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Quantos locais ou filiais você pretende equipar com nosso serviço de rádio indoor?
+  1 - Um local
+  2 - Entre 2 a 5 locais
+  3 - Mais de 5 locais`,
+    validAnswers: ["1", "2", "3"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Qual é a faixa etária predominante do seu público?
+  1 - Menos de 18 anos
+  2 - 18 a 25 anos
+  3 - 26 a 35 anos
+  4 - 36 a 50 anos
+  5 - Acima de 50 anos`,
+    validAnswers: ["1", "2", "3", "4", "5"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Qual é a classe social predominante do seu público?
+  1 - Classe A
+  2 - Classe B
+  3 - Classe C
+  4 - Classe D`,
+    validAnswers: ["1", "2", "3", "4"],
+    type: "multiple-choice",
+  },
+  {
+    question: `Qual é o tipo de negócio da sua empresa?
+  (Resposta aberta)`,
+    type: "open-ended",
+  },
+  {
+    question: `Você teria interesse em TV indoor também?
+  1 - Sim
+  2 - Não`,
+    validAnswers: ["1", "2"],
+    type: "multiple-choice",
+  },
 ];
 
 const formQuestionsInfyads = [
