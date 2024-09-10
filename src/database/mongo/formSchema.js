@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const formSchema = new mongoose.Schema({
   client_phone: Number,
-  question: String,
-  answer: String,
+  question: [String],
+  answer: [String],
   date: Date,
 });
 
