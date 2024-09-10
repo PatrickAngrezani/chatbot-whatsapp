@@ -458,15 +458,15 @@ O objetivo aqui é entender um pouco mais sobre suas necessidades e detectar com
     console.error("Error sending the first question:", error);
   }
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Erro ao enviar e-mail:", error);
-      return { status: 500, message: "Server error trying send email" };
-    } else {
-      console.log("E-mail enviado:", info.response);
-      return { status: 200, message: "Email sent succesfully" };
-    }
-  });
+  // transporter.sendMail(mailOptions, (error, info) => {
+  //   if (error) {
+  //     console.error("Erro ao enviar e-mail:", error);
+  //     return { status: 500, message: "Server error trying send email" };
+  //   } else {
+  //     console.log("E-mail enviado:", info.response);
+  //     return { status: 200, message: "Email sent succesfully" };
+  //   }
+  // });
 });
 
 const app = express();
@@ -573,10 +573,10 @@ async function sendNextFormQuestion(number, type) {
         })),
       };
 
-      await sendTeamRadioInstructions(
-        `120363301499456595@g.us`,
-        instructionsCreateRadio
-      );
+      // await sendTeamRadioInstructions(
+      //   `120363301499456595@g.us`,
+      //   instructionsCreateRadio
+      // );
 
       delete conversationState[number];
     }
@@ -618,8 +618,6 @@ function checkExitMessageW(clientMessage) {
   }
 }
 
-async function sendQuestionObjdb(question, response) {}
-
 async function isValidResponse(questionIndex, clientMessage, number, type) {
   const formQuestionsRadioIndoor = generalFunctions.formQuestionsRadioIndoor;
   const formQuestionsInfyads = generalFunctions.formQuestionsInfyads;
@@ -645,11 +643,6 @@ async function isValidResponse(questionIndex, clientMessage, number, type) {
   const state = Object.values(conversationState).find(
     (state) => state.number === number
   );
-
-  const question = questionObj.question;
-  const response = validAnswers.find((answer) => answer === clientMessage);
-
-  await sendQuestionObjdb(question, response);
 
   if (
     state &&
