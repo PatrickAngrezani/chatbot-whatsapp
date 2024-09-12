@@ -595,7 +595,8 @@ async function sendNextFormQuestion(number, type) {
 
       await sendTeamRadioInstructions(
         `120363301499456595@g.us`,
-        instructionsCreateRadio
+        instructionsCreateRadio,
+        state
       );
 
       delete conversationState[number];
@@ -677,13 +678,16 @@ async function isValidResponse(questionIndex, clientMessage, number, type) {
   return true;
 }
 
-async function sendTeamRadioInstructions(number, instructions) {
+async function sendTeamRadioInstructions(number, instructions, state) {
   let message = `Instruções para criação de nova rádio da empresa ${instructions.company}:\n\n`;
 
-  instructions.responses.forEach((instruction, index) => {
-    message += `${index + 1} - ${instruction.question}\n(${
-      instruction.answer
-    })\n\n`;
+  state.responses.forEach((response, index) => {
+    const question = response.question;
+    const answer = response.answer;
+
+    const formattedResponse = formatResponse(question, answer);
+
+    message += `${index + 1} - ${question}\nR: ${formattedResponse}\n\n`;
   });
 
   try {
