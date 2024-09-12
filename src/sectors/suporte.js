@@ -103,8 +103,7 @@ function formatResponse(question, answer) {
   return formattedResponse;
 }
 
-async function saveQuestionsResponsesDB(number) {
-  const state = conversationState[number];
+async function saveQuestionsResponsesDB(number, state) {
   let formattedResponse;
 
   const questions = [];
@@ -122,6 +121,9 @@ async function saveQuestionsResponsesDB(number) {
 
   try {
     await Form.create({
+      company: state.company,
+      client_first_name: state.firstName,
+      client_last_name: state.lastName,
       client_phone: number,
       question: questions,
       answer: answers,
@@ -407,9 +409,12 @@ client.on("receive-form", async (form) => {
   const linkWhatsApp = "https://wa.me/5511942700889";
   let dayTimeFreetings = daytime.split("!")[0];
   const firstNameLead = leadName.split(" ")[0];
+  const lastNameLead = leadName.split(" ")[1];
 
   const formattedLeadFirstName =
     generalFunctions.formatName1CapitalLetter(firstNameLead);
+  const formattedLeadLastName =
+    generalFunctions.formatName1CapitalLetter(lastNameLead);
 
   let mailOptions = {
     from: process.env.EMAIL_COMERCIAL,
@@ -439,12 +444,16 @@ Atenciosamente, Raphael Caires -  <a href="${linkWhatsApp}">Meu WhatsApp</a>.<br
   }
 
   let state = {};
+
   if (!conversationState[numberArgument]) {
     state = generalFunctions.createConversationState(
       conversationState,
       numberArgument
     );
   }
+
+  state["firstName"] = formattedLeadFirstName;
+  state["lastName"] = formattedLeadLastName;
   state["company"] = leadCompany;
   state["email"] = leadEmail;
   state["answeringQuestions"] = true;
@@ -577,7 +586,7 @@ async function sendNextFormQuestion(number, type) {
         console.error(error);
       }
     } else {
-      await saveQuestionsResponsesDB(formattedNumber);
+      await saveQuestionsResponsesDB(formattedNumber, state);
 
       await client_.sendMessage(
         `${number}`,
