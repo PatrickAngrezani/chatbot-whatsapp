@@ -78,17 +78,6 @@ async function sendQRCodeByEmail(qrCodeFilePath) {
   emailSuporteSent = true;
 }
 
-function formatDateToBrazil(date) {
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth is zero-based
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
-
-  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-}
-
 function formatResponse(question, answer) {
   const lines = question.split("\n");
   const responseLine = lines.find((line) => line.startsWith(`${answer} -`));
@@ -120,6 +109,9 @@ async function saveQuestionsResponsesDB(number, state) {
   });
 
   try {
+    const brazilDate = generalFunctions.formatDateToBrazil(new Date());
+    const parsedDate = generalFunctions.parseDate(brazilDate);
+
     await Form.create({
       company: state.company,
       client_first_name: state.firstName,
@@ -127,7 +119,7 @@ async function saveQuestionsResponsesDB(number, state) {
       client_phone: number,
       question: questions,
       answer: answers,
-      date: formatDateToBrazil(new Date()),
+      date: parsedDate,
     });
 
     console.log(`Form number ${number} saved succesfully`);
@@ -159,7 +151,6 @@ client.on("message", async (msg) => {
   const dateMsg = new Date(timestamp * 1000).toLocaleString();
   const clientMessage = msg.body.toLowerCase().trim();
   const msgFrom = msg.from;
-  const msgAuthor = msg.author;
   const isGroupMessage = msgFrom.includes("g");
   const numberOfWords = clientMessage.split(" ").length;
   const formattedNumber = msgFrom.split("@")[0];
@@ -688,7 +679,11 @@ async function isValidResponse(questionIndex, clientMessage, number, type) {
 }
 
 async function sendTeamRadioInstructions(number, instructions, state) {
-  let message = `Instruções para criação de nova rádio da empresa ${instructions.company}:\n\n`;
+  const leadFirstName = state.firstName;
+  const leadPhoneNumber = state.number;
+
+  let message = `Instruções para criação de nova rádio da empresa ${instructions.company}:\n
+Lead: ${leadFirstName} - ${leadPhoneNumber}\n`;
 
   state.responses.forEach((response, index) => {
     const question = response.question;
