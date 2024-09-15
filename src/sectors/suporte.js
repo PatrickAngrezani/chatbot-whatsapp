@@ -98,17 +98,17 @@ async function saveQuestionsResponsesDB(number, state) {
   const questions = [];
   const answers = [];
 
-  state.responses.forEach((response) => {
-    const question = response.question;
-    const answer = response.answer;
-
-    formattedResponse = formatResponse(question, answer);
-
-    questions.push(question);
-    answers.push(formattedResponse);
-  });
-
   try {
+    state.responses.forEach((response) => {
+      const question = response.question;
+      const answer = response.answer;
+
+      formattedResponse = formatResponse(question, answer);
+
+      questions.push(question);
+      answers.push(formattedResponse);
+    });
+
     const brazilDate = generalFunctions.formatDateToBrazil(new Date());
     const parsedDate = generalFunctions.parseDate(brazilDate);
 
@@ -585,7 +585,7 @@ async function sendNextFormQuestion(number, type) {
       );
       state.answeringQuestions = false;
 
-      let instructionsCreateRadio = {
+      const instructions = {
         company: state.company,
         responses: state.responses.map((response) => ({
           question: response.question.split("?")[0],
@@ -595,7 +595,7 @@ async function sendNextFormQuestion(number, type) {
 
       await sendTeamRadioInstructions(
         `120363301499456595@g.us`,
-        instructionsCreateRadio,
+        instructions,
         state
       );
 
@@ -616,6 +616,8 @@ async function sendNextFormQuestion(number, type) {
         console.error(error);
       }
     } else {
+      await saveQuestionsResponsesDB(formattedNumber, state);
+
       await client_.sendMessage(
         `${number}`,
         `Perfeito! Muito obrigado por suas respostas.
@@ -625,6 +627,20 @@ Com base nas informações fornecidas, vamos gerar um link de acesso e finalizar
 Por favor, aguarde enquanto preparamos tudo para você!`
       );
       state.answeringQuestions = false;
+
+      const instructions = {
+        company: state.company,
+        responses: state.responses.map((response) => ({
+          question: response.question.split("?")[0],
+          answer: response.answer,
+        })),
+      };
+
+      await sendTeamRadioInstructions(
+        `120363301499456595@g.us`,
+        instructions,
+        state
+      );
 
       delete conversationState[number];
     }
@@ -682,8 +698,8 @@ async function sendTeamRadioInstructions(number, instructions, state) {
   const leadFirstName = state.firstName;
   const leadPhoneNumber = state.number;
 
-  let message = `Instruções para criação de nova rádio da empresa ${instructions.company}:\n
-Lead: ${leadFirstName} - ${leadPhoneNumber}\n`;
+  let message = `Empresa *${instructions.company}*:\n
+*Lead: ${leadFirstName} - ${leadPhoneNumber}*\n\n`;
 
   state.responses.forEach((response, index) => {
     const question = response.question;
@@ -691,7 +707,7 @@ Lead: ${leadFirstName} - ${leadPhoneNumber}\n`;
 
     const formattedResponse = formatResponse(question, answer);
 
-    message += `${index + 1} - ${question}\nR: ${formattedResponse}\n\n`;
+    message += `${index + 1} - ${question}\n*R: ${formattedResponse}*\n\n`;
   });
 
   try {
