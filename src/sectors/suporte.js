@@ -413,13 +413,13 @@ client.on("receive-form", async (form) => {
     subject: "Formulário InfyMedia",
     html: `${dayTimeFreetings}, ${formattedLeadFirstName}! Espero que recebas essa mensagem bem!<br><br>
 
-Meu nome é Raphael Caires, responsável pelo setor Comercial da InfyMedia.<br><br>
+Me chamo Caires, sou responsável pelo setor Comercial da InfyMedia.<br><br>
     
 Estou entrando em contato para confirmar o recebimento das informações através dos nossos formulários. Aproveito para avisar que te enviamos uma mensagem no WhatsApp.<br><br>
 
 Nossa equipe aguarda suas respostas para prosseguir com o atendimento.<br><br>
     
-Atenciosamente, Raphael Caires -  <a href="${linkWhatsApp}">Meu WhatsApp</a>.<br><br>`,
+Atenciosamente, Caires -  <a href="${linkWhatsApp}">Meu WhatsApp</a>.<br><br>`,
   };
 
   if (leadPhoneNumber) {
