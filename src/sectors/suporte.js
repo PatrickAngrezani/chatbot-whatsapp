@@ -552,6 +552,37 @@ app.listen(PORT, () => {
   }
 });
 
+async function sendCTA(state, client_, number) {
+  const questionIndex = generalFunctions.formQuestionsRadioIndoor.findIndex(
+    (q) =>
+      q.question.includes(
+        "Quantos locais ou filiais você pretende equipar com nosso serviço de rádio indoor?"
+      )
+  );
+
+  if (questionIndex !== -1) {
+    const filialQuestion = state.responses[questionIndex];
+
+    if (filialQuestion.answer === "1" || filialQuestion.answer === "2") {
+      await client_.sendMessage(
+        `${number}`,
+        `Obrigado por suas respostas. Por favor, acesse agora mesmo nosso link de contratação! 
+
+*Rádio Indoor para sua Empresa*
+https://infymedia.com.br/solucoes/radio-indoor/`
+      );
+    } else if (filialQuestion.answer === "3") {
+      await client_.sendMessage(
+        `${number}`,
+        `Obrigado por suas respostas. Por favor, contate agora mesmo nosso setor comercial!
+
+*InfyMedia - Setor Comercial*
+https://wa.me/5511942700889`
+      );
+    }
+  }
+}
+
 async function sendNextFormQuestion(number, type) {
   const client_ = client;
   const formattedNumber = number.split("@")[0];
@@ -579,10 +610,8 @@ async function sendNextFormQuestion(number, type) {
     } else {
       await saveQuestionsResponsesDB(formattedNumber, state);
 
-      await client_.sendMessage(
-        `${number}`,
-        "Todas as perguntas foram respondidas. Obrigado! Em breve um dos nossos profissinais entrará em contato para dar sequência ao atendimento."
-      );
+      await sendCTA(state, client_, number);
+
       state.answeringQuestions = false;
 
       const instructions = {
