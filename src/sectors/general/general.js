@@ -15,6 +15,7 @@ const teammateNames = [
   "marcelo",
   "patrick",
   "raphael",
+  "lorena",
 ];
 
 const companyNumbers = [
@@ -35,6 +36,7 @@ const companyNumbers = [
   "5551989932522@c.us",
   "552792481106@c.us",
   "5527992481106@c.us",
+  "555197294553@c.us",
 ];
 
 const dddSouthEast = [
