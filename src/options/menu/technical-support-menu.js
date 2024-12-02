@@ -3,6 +3,7 @@ const technicalSupportMenu = `1 - Solicitação de spots;
 3 - Configurações técnicas;
 4 - Suporte Técnico;
 5 - Outros setores;
-6 - Voltar ao Menu Principal.`;
+6 - Registrar Faixas;
+7 - Voltar ao Menu Principal.`;
 
 module.exports = technicalSupportMenu;

@@ -7,6 +7,7 @@ const menuOptions = `8 - Menu Principal
 5 - Outros Setores;
 6 - Cancelamento;
 7 - Cobrança Ecad;
-8 - Voltar ao Menu Principal.`;
+8 - Registrar Faixas;
+9 - Voltar ao Menu Principal.`;
 
 module.exports = menuOptions;

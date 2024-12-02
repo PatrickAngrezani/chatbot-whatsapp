@@ -24,6 +24,7 @@ const comercialMenu = require("../options/menu/comercial-menu");
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"];
 const generalFunctions = require("./general/general");
+const registerTracks = require("../options/general/register-tracks");
 let emailComercialSent = false;
 
 const client = new Client({
@@ -159,6 +160,8 @@ async function showOptions(option) {
     case "10":
       return sectorsOption;
     case "11":
+      return registerTracks;
+    case "12":
       return menuOptions;
   }
 }
