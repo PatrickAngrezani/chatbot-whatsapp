@@ -11,6 +11,7 @@ Por favor, selecione a opção a seguir para seguir com o atendimento:
 8 - Métricas;
 9 - Fale com o setor Comercial;
 10 - Outros setores;
-11 - Voltar ao Menu Principal.`;
+11 - Registro de Faixas;
+12 - Voltar ao Menu Principal.`;
 
 module.exports = menuOptions;

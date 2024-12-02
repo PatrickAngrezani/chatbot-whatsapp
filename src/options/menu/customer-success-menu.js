@@ -5,6 +5,7 @@ const customerSuccessMenu = `1 - Agendar treinamento;
 5 - Outros Setores;
 6 - Cancelamento;
 7 - Cobrança Ecad;
-8 - Voltar ao Menu Principal.`;
+8 - Registrar Faixas;
+9 - Voltar ao Menu Principal.`;
 
 module.exports = customerSuccessMenu;

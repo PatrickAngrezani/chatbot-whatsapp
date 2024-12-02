@@ -25,6 +25,7 @@ require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6"];
 const generalFunctions = require("./general/general");
+const registerTracks = require("../options/general/register-tracks");
 const conversationState = {};
 let emailSuporteSent = false;
 
@@ -356,6 +357,8 @@ async function showOptions(option) {
     case "5":
       return sectorsOption;
     case "6":
+      return registerTracks;
+    case "7":
       return menuOptions;
   }
 }

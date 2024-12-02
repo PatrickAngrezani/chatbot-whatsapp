@@ -8,6 +8,7 @@ const comercialMenu = `1 - Serviços e Produtos;
 8 - Métricas;
 9 - Fale com o setor Comercial;
 10 - Outros setores;
-11 - Voltar ao Menu Principal.`;
+11 - Registrar Faixas;
+12 - Voltar ao Menu Principal.`;
 
 module.exports = comercialMenu;

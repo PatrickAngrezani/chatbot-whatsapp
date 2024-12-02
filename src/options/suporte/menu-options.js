@@ -6,6 +6,7 @@ Por favor, selecione a opção a seguir para seguir com o atendimento:
 3 - Configurações técnicas;
 4 - Suporte técnico;
 5 - Outros setores;
-6 - Voltar ao Menu Principal.`;
+6 - Registro de Faixas;
+7 - Voltar ao Menu Principal.`;
 
 module.exports = menuOptions;

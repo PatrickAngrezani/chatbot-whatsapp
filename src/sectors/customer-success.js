@@ -25,6 +25,7 @@ require("dotenv").config;
 
 const options = ["1", "2", "3", "4", "5", "6", "7", "8"];
 const generalFunctions = require("./general/general");
+const registerTracks = require("../options/general/register-tracks");
 let emailCSSent = false;
 
 const client = new Client({
@@ -167,6 +168,8 @@ async function showOptions(option) {
     case "7":
       return ecadRoyalties;
     case "8":
+      return registerTracks;
+    case "9":
       return menuOptions;
   }
 }
