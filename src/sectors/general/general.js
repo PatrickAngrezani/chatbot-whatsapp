@@ -3,6 +3,7 @@ const fs = require("fs");
 const timeStarted = new Date().toLocaleString();
 const serviceMapFilePath = "../../service-map.json";
 const XLSX = require("xlsx");
+const { DateTime } = require("luxon");
 
 const teammateNames = [
   "caires",
@@ -363,28 +364,16 @@ async function checkGreetings(message) {
   return found;
 }
 
-async function checkDayShift() {
-  let daytime;
-  const date = new Date();
-  const hour = date.getHours();
+function getGreeting() {
+  const currentHour = new Date().getHours();
 
-  if (hour >= 5 && hour < 12) {
-    daytime = "Bom dia!";
-  } else if (hour >= 12 && hour < 18) {
-    daytime = "Boa tarde!";
+  if (currentHour >= 5 && currentHour <= 12) {
+    return "Bom dia!";
+  } else if (currentHour >= 12 && currentHour <= 18) {
+    return "Boa tarde!";
   } else {
-    daytime = "Boa noite!";
+    return "Boa noite!";
   }
-
-  return daytime;
-}
-
-async function updateDayTime(currentDayTime) {
-  const newDayTime = await checkDayShift();
-  if (newDayTime != currentDayTime) {
-    currentDayTime = newDayTime;
-  }
-  return currentDayTime;
 }
 
 function formatName1CapitalLetter(name) {
@@ -463,7 +452,7 @@ module.exports = {
   checkGreetings,
   teammateNames,
   companyNumbers,
-  updateDayTime,
+  getGreeting,
   dddSouthEast,
   formQuestionsRadioIndoor,
   greetingsForm,
