@@ -6,6 +6,7 @@ ENV EMAIL_FINANCEIRO=katharine@infymedia.com.br
 ENV EMAIL_COMERCIAL=comercial@infymedia.com.br
 ENV EMAIL_COMERCIAL_PASS="mqco wkvu asjb hxmi"
 ENV EMAIL_SUPORTE=suporte@infymedia.com.br
+ENV EMAIL_SUPORTE2=suporte2@infymedia.com.br
 ENV EMAIL_SUPORTE_PASS="jpwz bixq ujwv ctcj"
 
 # Install dependencies required by Puppeteer
