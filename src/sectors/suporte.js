@@ -29,7 +29,7 @@ const registerTracks = require("../options/general/register-tracks");
 const conversationState = {};
 let emailSuporteSent = false;
 
-const mongoURL = "mongodb://localhost:27017/chatbot-infymedia";
+const mongoURL = "mongodb://mongodbcontainer:27017/chatbot-infymedia";
 
 mongoose
   .connect(mongoURL)
@@ -63,7 +63,7 @@ async function sendQRCodeByEmail(qrCodeFilePath) {
 
   let mailOptions = {
     from: process.env.EMAIL_SUPORTE,
-    to: process.env.EMAIL_SUPORTE,
+    to: process.env.EMAIL_SUPORTE2,
     subject: "Your WhatsApp QR Code",
     text: "Por favor, escaneie esse QRCode com seu aplicativo do WhatsApp para conectar ao bot.",
     attachments: [
