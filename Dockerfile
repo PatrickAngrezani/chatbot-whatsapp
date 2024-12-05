@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:latest
+FROM node:16
 
 # Set environment variables
 ENV EMAIL_FINANCEIRO=katharine@infymedia.com.br
