@@ -4,7 +4,6 @@ const serviceMapFilePath = "../../service-map.json";
 fs.writeFileSync(serviceMapFilePath, JSON.stringify({}), "utf8");
 const nodemailer = require("nodemailer");
 
-let daytime = require("../hour-time");
 const timeStarted = new Date().toLocaleString();
 
 const { Client, LocalAuth } = require("whatsapp-web.js");
@@ -126,10 +125,12 @@ client.on("message", async (msg) => {
 
 async function welcomeMessage(hasService) {
   let saudacao;
+  let currentDayTimeGreeting = generalFunctions.getGreeting();
+
   if (!hasService) {
-    saudacao = `${daytime} Seja Bem-vindo ao setor Comercial InfyMedia! Por favor, selecione uma opção para continuar:`;
+    saudacao = `${currentDayTimeGreeting} Seja Bem-vindo ao setor Comercial InfyMedia! Por favor, selecione uma opção para continuar:`;
   } else {
-    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
+    saudacao = `${currentDayTimeGreeting} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
   }
 
   return `${saudacao}

@@ -181,15 +181,17 @@ async function showOptions(option) {
 
 async function welcomeMessage(hasService) {
   let saudacao;
+  let currentDayTimeGreeting = generalFunctions.getGreeting();
+
   if (!hasService) {
-    saudacao = `${daytime} Seja bem vindo(a) ao setor Financeiro InfyMedia! Será uma satisfação atendê-lo.
+    saudacao = `${currentDayTimeGreeting} Seja bem vindo(a) ao setor Financeiro InfyMedia! Será uma satisfação atendê-lo.
 
 Para agilizar seu atendimento informe os dados abaixo:
 - Nome completo:
 - Número de lojas que possui conosco (Ex: 2 unid):
 - CNPJs das empresas:`;
   } else {
-    saudacao = `${daytime} Vejo que hoje já nos falamos. Será uma satisfação atendê-lo novamente.
+    saudacao = `${currentDayTimeGreeting} Vejo que hoje já nos falamos. Será uma satisfação atendê-lo novamente.
     
 Deseja seguir com as mesmas informações anteriores? 
 Pode também encaminhar o novo CNPJ a tratarmos.`;

@@ -176,14 +176,16 @@ async function showOptions(option) {
 
 async function welcomeMessage(hasService) {
   let saudacao;
+  let currentDayTimeGreeting = generalFunctions.getGreeting();
+
   if (!hasService) {
-    saudacao = `${daytime} Seja bem vindo(a) a InfyMedia! Será uma satisfação atendê-lo(a).
+    saudacao = `${currentDayTimeGreeting} Seja bem vindo(a) a InfyMedia! Será uma satisfação atendê-lo(a).
 Para agilizar seu atendimento, informe os dados abaixo: 
 
 Nome da empresa:
 CNPJs das empresas:`;
   } else {
-    saudacao = `${daytime} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
+    saudacao = `${currentDayTimeGreeting} Vejo que hoje já nos falamos. Por favor, selecione o tópico:`;
   }
 
   return `${saudacao}`;
