@@ -4,6 +4,8 @@ FROM node:16
 # Set environment variables
 ENV EMAIL_FINANCEIRO=katharine@infymedia.com.br
 ENV EMAIL_COMERCIAL=comercial@infymedia.com.br
+ENV EMAIL_CUSTOMER_SUCCESS=fernanda.moraes@infymedia.com.br
+ENV EMAIL_CUSTOMER_SUCCESS2=fernanda.araujo@infymedia.com.br 
 ENV EMAIL_COMERCIAL_PASS="mqco wkvu asjb hxmi"
 ENV EMAIL_SUPORTE=suporte@infymedia.com.br
 ENV EMAIL_SUPORTE2=suporte2@infymedia.com.br
