@@ -414,13 +414,17 @@ client.on("receive-form", async (form) => {
     from: process.env.EMAIL_COMERCIAL,
     to: `${leadEmail}`,
     subject: "Formulário InfyMedia",
-    html: `${dayTimeFreetings}, ${formattedLeadFirstName}! Espero que recebas essa mensagem bem!<br><br>
+    html: `${dayTimeFreetings}, ${formattedLeadFirstName}! Tudo bem?<br><br>
 
-Me chamo Caires, sou responsável pelo setor Comercial da InfyMedia.<br><br>
-    
-Estou entrando em contato para confirmar o recebimento das informações através dos nossos formulários. Aproveito para avisar que te enviamos uma mensagem no WhatsApp.<br><br>
+Que prazer receber seu contato e interesse! 
 
-Nossa equipe aguarda suas respostas para prosseguir com o atendimento.<br><br>
+Sou o Caires, responsável pelo setor Comercial da InfyMedia, e estou entrando em contato para confirmar se você recebeu as informações enviadas pelos nossos formulários.  
+
+Aproveito para avisar que também enviamos uma mensagem para você no WhatsApp.
+
++55 11 94270 0889  
+
+Nossa equipe está pronta e aguardando suas respostas para dar continuidade ao atendimento de forma ágil e eficiente.<br><br>
     
 Atenciosamente, Caires -  <a href="${linkWhatsApp}">Meu WhatsApp</a>.<br><br>`,
   };
